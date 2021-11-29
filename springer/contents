@@ -1,0 +1,537 @@
+                 Table of Contents
+
+
+Chapter 2
+
+     Exercise 2.3      page 39      firsts-of-both
+     Program 2.1       page 44      singleton-list?
+     Program 2.2       page 47      last-item
+     Program 2.3       page 50      member?
+     Program 2.4       page 52      remove-1st
+     Program 2.5       page 62      remove-1st-trace
+     Program 2.6       page 62      entering
+     Program 2.7       page 62      leaving
+     Program 2.8       page 66      swapper
+     Exercise 2.24     page 70      describe
+
+
+Chapter 3
+
+     Program 3.1       page 75      add1
+     Program 3.2       page 75      sub1
+     Program 3.4       page 77      harmonic-sum
+     Program 3.5       page 78      list-of-zeros
+     Program 3.6       page 79      length
+     Program 3.7       page 81      list-ref
+     Program 3.8       page 85      rzero?
+     Program 3.9       page 86      r+
+     Program 3.10      page 86      r*
+     Program 3.11      page 86      r-
+     Program 3.12      page 87      rinvert
+     Program 3.13      page 87      r/
+     Program 3.14      page 87      r=
+     Program 3.15      page 87      rpositive?
+     Program 3.16      page 88      r>
+     Program 3.17      page 88      max
+     Program 3.18      page 88      rmax
+     Program 3.19      page 89      extreme-value
+     Program 3.20      page 90      rprint
+     Program 3.21      page 91      numr
+                                    denr
+                                    make-ratl
+     Exercise 3.15     page 92      rpositive?
+
+
+Chapter 4
+
+     Program 4.1       page 96      append
+     Program 4.2       page 97      reverse
+     Program 4.3       page 98      merge
+     Program 4.4       page 98      even?
+     Program 4.5       page 99      odd?
+     Program 4.6       page 100     remove
+     Program 4.7       page 102     count-all
+     Program 4.8       page 105     remove-all
+     Program 4.9       page 105     remq-all
+     Program 4.10      page 107     reverse-all
+     Program 4.13      page 110     depth
+     Program 4.14      page 111     flatten
+     Program 4.15      page 113     remove-left-most
+     Program 4.16      page 113     member-all?
+     Program 4.17      page 114     remove-left-most
+     Program 4.18      page 116     fact
+     Program 4.19      page 118     fact-it
+     Program 4.20      page 121     fib
+     Program 4.24      page 124     fib-it
+     Program 4.25      page 127     reverse-it
+
+
+Chapter 5
+
+     Program 5.3       page 137     remove-leftmost
+     Program 5.4       page 139     fact
+     Program 5.5       page 139     swapper
+     Exercise 5.5      page 141     mystery
+     Program 5.6       page 144     zero-poly?
+     Program 5.7       page 145     make-term
+     Program 5.8       page 145     leading-term
+     Program 5.9       page 146     p+
+     Program 5.10      page 148     p*
+     Program 5.11      page 148     negative-poly
+     Program 5.12      page 148     p-
+     Program 5.13      page 150     poly-value
+     Program 5.14      page 151     the-zero-poly
+                                    degree
+                                    leading-coef
+                                    rest-of-poly
+                                    poly-cons
+     Program 5.15      page 153     the-zero-poly
+                                    degree
+                                    leading-coef
+                                    rest-of-poly
+                                    poly-cons
+     Program 5.16      page 157     digits->poly
+     Program 5.17      page 157     binary->decimal
+     Program 5.18      page 158     poly->digits
+     Program 5.20      page 160     decimal->binary
+
+
+Chapter 6
+
+     Program 6.1       page 165     string-insert
+     Exercise 6.4      page 167     mystery
+     Program 6.2       page 169     square-root
+     Program 6.3       page 171     square-root-display
+     Program 6.5       page 172     round-n-places
+     Program 6.6       page 174     read-demo
+     Program 6.7       page 175     interactive-square-root
+     Program 6.9       page 181     tower-of-hanoi
+     Program 6.10      page 182     display-tower-of-hanoi
+     Program 6.12      page 184     legal?
+                                    solution?
+                                    fresh-try
+     Program 6.13      page 185     build-solution
+     Program 6.14      page 186     forward
+     Program 6.15      page 186     backtrack
+     Program 6.16      page 188     searcher
+     Exercise 6.16     page 191     blanks
+
+
+Chapter 7
+
+     Program 7.1       page 196     map
+     Program 7.2       page 197     for-each
+     Program 7.3       page 198     add
+     Program 7.4       page 199     list
+     Program 7.5       page 199     writeln
+     Program 7.6       page 199     error
+     Program 7.7       page 200     add
+     Program 7.8       page 201     compose
+     Program 7.9       page 203     plus
+     Program 7.10      page 203     times
+     Program 7.11      page 203     exponent
+     Program 7.12      page 203     super
+     Program 7.13      page 204     superduper
+     Program 7.14      page 204     super-order
+     Program 7.15      page 205     ackermann
+     Exercise 7.5      page 206     iota
+                                    mystery
+     Exercise 7.8      page 208     andmap
+     Exercise 7.10     page 209     ormap
+     Program 7.16      page 212     member?-c
+     Program 7.17      page 213     apply-to-all
+     Program 7.18      page 213     sum
+     Program 7.19      page 213     product
+     Program 7.20      page 214     swapper-m
+     Exercise 7.14     page 215     round-5-places
+     Exercise 7.19     page 216     andmap-c
+                                    all-positive?
+                                    ormap
+                                    some-positive?
+     Exercise 7.20     page 217     divides-by
+     Program 7.23      page 221     flat-recur
+     Program 7.24      page 222     filter-in-c
+     Program 7.25      page 225     filter-in-all-c
+     Program 7.26      page 225     filter-in-all
+     Program 7.27      page 225     sum-all
+     Program 7.28      page 227     deep-recur
+
+
+Chapter 8
+
+     Program 8.1       page 232     both
+     Program 8.2       page 232     neither
+     Program 8.3       page 233     at-least-one
+     Program 8.4       page 237     make-set
+     Program 8.5       page 238     none
+     Program 8.6       page 238     there-exists
+     Program 8.7       page 239     for-all
+     Program 8.8       page 240     set-equal
+     Program 8.9       page 241     element
+     Program 8.10      page 241     contains
+     Program 8.11      page 242     superset
+     Program 8.12      page 242     subset
+     Program 8.13      page 242     cardinal
+     Program 8.14      page 243     intersection
+     Program 8.15      page 244     union
+     Program 8.16      page 244     difference
+     Program 8.17      page 245     set-builder
+     Program 8.19      page 246     family-union
+     Program 8.20      page 246     family-intersection
+     Program 8.21      page 247     set-map
+     Program 8.22      page 247     list->set
+     Program 8.23      page 248     set->list
+     Exercise 8.5      page 248     for-one
+     Exercise 8.6      page 249     superset
+     Program 8.24      page 250     the-empty-set
+                                    empty-set?
+                                    set?
+                                    pick
+     Program 8.25      page 251     adjoin
+                                    residue
+     Program 8.26      page 252     adjoin
+                                    residue
+     Exercise 8.7      page 253     pick
+     Program 8.27      page 256     make-op
+                                    op?
+                                    op-1st
+                                    op-2nd
+     Program 8.28      page 257     make-op
+                                    op?
+                                    op-1st
+                                    op-2nd
+     Program 8.29      page 257     make-op
+                                    op?
+                                    op-1st
+                                    op-2nd
+     Program 8.30      page 258     cartesian-product
+     Program 8.31      page 259     domain
+                                    range
+     Program 8.32      page 260     subrelation/1st
+     Program 8.33      page 260     function?
+     Program 8.34      page 261     value
+
+
+Chapter 9
+
+     Program 9.1       page 269     view
+     Program 9.2       page 270     make-vector
+     Program 9.3       page 271     list->vector
+     Program 9.4       page 271     vector
+     Program 9.5       page 272     vector-stretch
+     Program 9.6       page 272     vector-copy
+     Program 9.7       page 272     vector-update
+     Program 9.8       page 273     list->vector
+     Program 9.9       page 273     vector-map
+     Program 9.10      page 274     multiply-by-scalar
+     Program 9.11      page 274     vector-apply-elementwise-to-both
+     Program 9.12      page 275     vec+
+                                    vec*
+     Program 9.13      page 275     vector-sum
+     Program 9.14      page 276     vector-product
+     Program 9.15      page 277     vector-accumulate
+     Program 9.16      page 277     vector->list
+     Program 9.17      page 279     dot-product
+     Program 9.18      page 279     vector?
+                                    vector-length
+     Program 9.19      page 280     vector-ref
+                                    vector-generator
+     Program 9.20      page 280     vector-ref
+                                    vector-generator
+     Program 9.21      page 283     vector-generator
+     Program 9.22      page 283     vector-update!
+     Program 9.23      page 284     list->vector
+     Program 9.24      page 286     vector-reverse
+     Program 9.25      page 286     swap-maker
+     Program 9.26      page 287     vector-reverse!
+     Program 9.27      page 288     swap-maker
+     Program 9.30      page 293     num-cols
+     Program 9.31      page 294     num-rows
+     Program 9.32      page 294     matrix-ref
+     Program 9.33      page 295     matrix-generator
+     Program 9.34      page 296     row-of
+     Program 9.35      page 296     column-of
+     Program 9.37      page 297     matrix-transpose
+     Program 9.38      page 299     matrix-product
+     Program 9.39      page 300     matrix-set!
+
+
+Chapter 10
+
+     Program 10.1      page 304     insertsort
+     Program 10.2      page 304     insert
+     Program 10.5      page 306     vector-insertsort!
+     Program 10.6      page 307     vector-insert!
+     Program 10.7      page 310     make-groups
+     Program 10.8      page 311     pair-merge
+     Program 10.9      page 311     nat-mergesort
+     Program 10.10     page 313     vector-merge!
+     Program 10.11     page 314     vector-mergesort!
+     Program 10.12     page 315     vector-change!
+     Program 10.13     page 317     quicksort
+     Program 10.14     page 320     vector-quicksort!
+     Program 10.15     page 321     partition
+     Program 10.16     page 321     vector-swap!
+     Program 10.18     page 324     random-list
+     Program 10.19     page 325     timer
+     Program 10.22     page 331     binary-search
+     Program 10.23     page 333     unlist
+     Program 10.25     page 337     find-supervisor
+     Program 10.26     page 338     closest-common-supervisor
+
+
+Chapter 11
+
+     Program 11.1      page 344     stk
+                                    empty?
+                                    top
+                                    print-stack
+                                    push!
+                                    pop!
+     Program 11.2      page 346     lookup
+     Program 11.3      page 347     assoc
+     Program 11.4      page 347     memoize
+     Program 11.5      page 348     memo-fib
+     Program 11.6      page 350     vector-memoize
+     Program 11.7      page 352     member?
+     Program 11.8      page 353     while-proc
+     Program 11.9      page 355     swapper
+     Program 11.11     page 359     mystery
+     Program 11.21     page 368     last-pair
+     Program 11.22     page 368     append!
+     Exercise 11.14    page 371     mystery
+     Exercise 11.16    page 371     efface
+                                    test-efface
+     Exercise 11.17    page 372     test-efface2
+                                    test-efface3
+     Exercise 11.18    page 372     smudge
+                                    shift-down
+                                    test-smudge
+     Exercise 11.19    page 373     *seen-pairs*
+                                    count-pairs
+                                    dont-count?
+                                    test-count-pairs
+                                    count-pairs
+     Exercise 11.20    page 375     reconfigure
+                                    at
+                                    overwrite
+                                    right
+                                    check-null
+                                    test-reconfigure
+     Exercise 11.22    page 378     shifter
+                                    overwrite
+     Exercise 11.23    page 379     busy-beaver
+                                    endless-growth
+                                    perpetual-motion
+                                    pendulum
+     Exercise 11.24    page 380     busy-beaver-lines
+                                    run-lines
+     Exercise 11.26    page 382     overwrite
+                                    right
+
+
+Chapter 12
+
+     Program 12.1      page 386     for-effect-only
+     Program 12.2      page 388     box-maker
+     Program 12.3      page 388     delegate
+     Program 12.4      page 389     base-object
+     Program 12.5      page 389     send
+     Program 12.6      page 390     box-maker
+     Program 12.7      page 391     counter-maker
+     Program 12.8      page 392     counter-maker
+     Program 12.9      page 393     accumulator-maker
+     Program 12.10     page 394     gauge-maker
+     Program 12.12     page 398     stack-maker
+     Program 12.13     page 400     queue-maker
+     Program 12.15     page 402     queue-maker
+     Program 12.18     page 406     circular-list-maker
+     Program 12.19     page 407     stack-maker
+     Program 12.20     page 408     queue-maker
+     Exercise 12.21    page 411     memoize
+     Program 12.23     page 412     bucket-maker
+     Program 12.24     page 412     memoize
+     Program 12.25     page 414     hash-table-maker
+     Program 12.26     page 415     memoize
+     Exercise 12.29    page 418     theater-maker
+     Exercise 12.30    page 418     theater-maker
+     Program 12.27     page 419     combine
+     Exercise 12.30    page 418     theater-maker
+     Exercise 12.32    page 420     theater-maker
+     Program 12.28     page 421     send
+     Exercise 12.33    page 421     counter-maker
+     Exercise 12.34    page 422     cartesian-point-maker
+     Exercise 12.35    page 423     manhattan-point-maker
+     Exercise 12.36    page 423     cartesian-origin-maker
+
+
+Chapter 13
+
+     Program 13.1      page 426     unif-rand-var-0-1
+     Program 13.2      page 427     exponential-random-variable
+     Program 13.3      page 427     arrival-time-generator
+     Program 13.4      page 428     normal-random-variable
+     Program 13.5      page 428     gallons-generator
+     Exercise 13.3     page 429     random-maker
+                                    random-time
+                                    random
+     Program 13.8      page 434     simulation-setup&run
+     Program 13.9      page 435     simulation
+     Program 13.10     page 436     station-maker
+     Program 13.11     page 437     pump-maker
+     Program 13.12     page 438     customer-maker
+     Program 13.13     page 439     service-maker
+     Program 13.14     page 439     report
+     Program 13.15     page 440     prompt-read
+     Program 13.16     page 441     gas-station-simulator
+     Exercise 13.9     page 444     prompt-read
+
+
+Chapter 14
+
+     Program 14.1      page 453     freeze
+     Program 14.2      page 356     freeze
+     Program 14.3      page 456     thaw
+     Program 14.4      page 457     make-promise
+     Program 14.5      page 458     delay
+     Program 14.6      page 458     delay-transformer
+                                    delay
+     Program 14.7      page 459     let
+     Program 14.8      page 460     let-transformer
+                                    let
+     Program 14.9      page 461     letrec
+     Program 14.10     page 462     letrec
+     Program 14.11     page 463     cycle-proc
+     Program 14.12     page 464     or-proc
+     Program 14.13     page 465     or-transformer
+                                    or
+     Program 14.14     page 465     or
+     Exercise 14.3     page 466     or
+     Exercise 14.12    page 470     vector-sum
+     Exercise 14.16    page 472     member-trace
+                                    factorial
+
+
+Chapter 15
+
+     Program 15.1      page 477     delayed-list-car
+     Program 15.2      page 478     delayed-list-cdr
+     Program 15.3      page 478     the-null-delayed-list
+     Program 15.4      page 479     random-delayed-list
+     Program 15.5      page 483     stream-car
+                                    stream-cdr
+     Program 15.6      page 483     random-stream-generator
+     Program 15.7      page 483     random-stream
+     Program 15.8      page 484     the-null-stream
+     Program 15.9      page 484     list->stream
+     Program 15.10     page 484     end-of-stream?
+     Program 15.11     page 485     stream-null?
+     Program 15.12     page 485     stream->list
+                                    finite-stream->list
+     Program 15.13     page 486     positive-integers
+     Program 15.14     page 486     even-positive-integers
+     Program 15.15     page 486     powers-of-2
+     Program 15.16     page 487     build-stream
+     Program 15.17     page 488     factorials
+     Program 15.18     page 488     stream-map
+     Program 15.19     page 489     odd-positive-integers
+     Program 15.20     page 489     stream-apply-to-both
+     Program 15.21     page 489     stream-plus
+                                    stream-times
+     Program 15.22     page 490     stream-filter-out
+     Program 15.23     page 490     positive-integers
+     Program 15.24     page 491     factorials
+     Program 15.25     page 491     fibonacci-numbers
+     Program 15.26     page 492     sieve
+     Program 15.27     page 492     prime-numbers
+     Exercise 15.14    page 495     stream-append
+                                    int-pairs-generator
+                                    stream-append/delay
+     Exercise 15.17    page 499     string-tester
+     Program 15.29     page 504     file-copier
+     Program 15.30     page 505     file->stream
+     Program 15.31     page 506     formatter
+     Program 15.32     page 506     remove-newlines
+     Program 15.33     page 506     remove-extra-spaces
+     Program 15.34     page 507     trim-spaces
+     Program 15.35     page 507     insert-double-spaces
+     Program 15.36     page 507     end-of-sentence?
+     Program 15.37     page 508     insert-newlines
+     Program 15.38     page 508     count-chars-to-next-space
+     Program 15.39     page 509     stream->file
+     Exercise 15.28    page 510     formatter
+     Exercise 15.29    page 511     formatter
+     Exercise 15.30    page 511     apply-procedures
+     Exercise 15.31    page 511     formatter
+
+
+Chapter 16
+
+     Exercise 16.6     page 526     reset
+     Program 16.1      page 527     call/cc
+     Program 16.2      page 530     receiver-1
+                                    receiver-2
+                                    receiver-3
+     Program 16.3      page 531     result
+                                    resultcc
+     Program 16.4      page 531     writeln/return
+                                    answer-maker
+                                    call
+     Exercise 16.16    page 537     deep
+                                    map-sub1
+     Program 16.5      page 538     *escape/thunk*
+                                    escaper
+     Program 16.6      page 539     receiver-4
+     Program 16.7      page 540     escaper
+     Exercise 16.22    page 541     new-escaper
+     Program 16.8      page 542     how-many-til
+     Program 16.9      page 543     how-many-til
+     Program 16.10     page 543     random-data
+     Program 16.11     page 544     product+
+     Program 16.12     page 545     product+
+     Program 16.13     page 546     product+
+     Program 16.14     page 546     product+
+     Program 16.15     page 547     product+
+     Program 16.16     page 547     *-and-count-maker
+     Program 16.17     page 548     product+
+
+
+Chapter 17
+
+     Program 17.1      page 553     countdown
+     Program 17.2      page 554     message
+     Program 17.3      page 554     attempt
+     Program 17.4      page 555     attempt
+     Program 17.5      page 557     receiver
+     Program 17.6      page 557     tester
+     Program 17.7      page 560     flatten-number-list
+     Program 17.8      page 560     break
+     Program 17.9      page 560     break
+     Program 17.10     page 561     get-back
+                                    break
+     Program 17.11     page 561     any-action
+     Program 17.12     page 561     any-action
+     Program 17.13     page 562     get-back
+                                    break
+     Program 17.14     page 563     break-argument
+                                    any-action
+     Program 17.15     page 564     get-back
+                                    break
+     Program 17.16     page 564     flatten-number-list
+     Program 17.17     page 564     extract
+     Program 17.18     page 565     store
+     Exercise 17.4     page 565     flatten-number-list
+     Exercise 17.6     page 565     product+
+     Program 17.19     page 569     A
+                                    B
+                                    C
+     Program 17.20     page 570     coroutine-maker
+     Program 17.21     page 570     resume-maker
+     Exercise 17.12    page 571     ping
+                                    pong
+     Program 17.22     page 573     reader
+     Program 17.23     page 574     writer
+     Program 17.24     page 574     x->y
+     Program 17.25     page 575     grune
+     Exercise 17.16    page 576     grune
+     Exercise 17.17    page 577     process-maker
