@@ -218,14 +218,6 @@
 (last-item '(cat))
 (last-item '((cat)))
 
-
-(define member?
-  (lambda (item ls)
-    (cond
-     ((null? ls) #f)
-     ((equal? (car ls) item) #t)
-     (else (member? item (cdr ls))))))
-
 (define member?
   (lambda (item ls)
     (cond
@@ -258,5 +250,161 @@
 (remove-1st 'fox '(hen (fox chick) cock))
 (remove-1st 'fox '())
 (remove-1st '(1 2) '(1 2 (1 2) ((1 2))))
+
+
+;;;; Exercise 2.10
+(define last-item
+  (lambda (ls)
+    (if (null? (cdr ls))
+	(car ls)
+	(last-item (cdr ls)))))
+
+(last-item '(1 2 3 4 5))
+(last-item '(a b (c d)))
+(last-item '(cat))
+(last-item '((cat)))
+
+(define member?
+  (lambda (item ls)
+    (if (null? ls)
+	#f
+	(or (equal? (car ls) item)
+	    (member? item (cdr ls))))))
+
+(member? 'cat '(dog hen cat pig))
+(member? 'fox '(dog hen cat pig))
+(member? 2 '(1 (2 3) 4))
+(member? '(2 3) '(1 (2 3) 4))
+(member? 'cat '())
+
+
+(define remove-1st
+  (lambda (item ls)
+    (if (null? ls)
+	'()
+	(if (equal? (car ls) item)
+	    (cdr ls)
+	    (cons (car ls) (remove-1st item (cdr ls)))))))
+
+(remove-1st 'fox '(hen fox chick cock))
+(remove-1st 'fox '(hen fox chick fox cock))
+(remove-1st 'fox '(hen (fox chick) cock))
+(remove-1st 'fox '())
+(remove-1st '(1 2) '(1 2 (1 2) ((1 2))))
+
+
+;;;; Exercise 2.11
+(define member?
+  (lambda (item ls)
+    (cond
+     ((null? ls) #f)
+     ((equal? (car ls) item) #t)
+     (else (member? item (cdr ls))))))
+
+;;;; Exercise 2.12
+
+;; ls at least contains two element 
+(define mystery
+  (lambda (ls)
+    (if (null? (cddr ls)) ;; if list has two elements
+	(cons (car ls) '()) ;;then return the first elment in list
+	(cons (car ls) (mystery (cdr ls)))))) ;;else build list with (car ls) and remaining for mystery(ls)
+
+(mystery '(1 2 3 4 5))
+;;=> (1 2 3 4)
+(mystery '(1 2 3 4))
+;;=> (1 2 3)
+(mystery '(1 2 3))
+;;=> (1 2)
+(mystery '(1 2))
+;;=> (1)
+
+;; this list removes the last element. So a good name remove-last
+
+
+
+;;;; Exercise 2.13: subst-1st
+
+(define subst-1st
+  (lambda (new old ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) old) (cons new (cdr ls)))
+     (else (cons (car ls)
+		 (subst-1st new old (cdr ls)))))))
+
+(subst-1st 'dog 'cat '(my cat is clever))
+(subst-1st 'b 'a '(c a b a c))
+(subst-1st '(0) '(*) '((*) (1) (*) (2)))
+(subst-1st 'two 'one '())
+
+(define substq-1st
+  (lambda (new old ls)
+    (cond
+     ((null? ls) '())
+     ((eq? (car ls) old) (cons new (cdr ls)))
+     (else (cons (car ls)
+		 (subst-1st new old (cdr ls)))))))
+
+(define substv-1st
+  (lambda (new old ls)
+    (cond
+     ((null? ls) '())
+     ((eqv? (car ls) old) (cons new (cdr ls)))
+     (else (cons (car ls)
+		 (subst-1st new old (cdr ls)))))))
+
+;;;; Exercise 2.14: insert-right-1st
+
+(define insert-right-1st
+  (lambda (new old ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) old)
+      (cons old (cons new (cdr ls))))
+     (else (cons (car ls)
+		 (insert-right-1st new old (cdr ls)))))))
+
+(insert-right-1st 'not 'does '(my dog does have fleas))
+
+(define insert-left-1st
+  (lambda (new old ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) old)
+      (cons new ls))
+     (else (cons (car ls)
+		 (insert-left-1st new old (cdr ls)))))))
+
+
+(insert-left-1st 'hot 'dogs '(I eat dogs))
+(insert-left-1st 'fun 'games '(some fun))
+(insert-left-1st 'a 'b '(a b c a b c))
+(insert-left-1st 'a 'b '())
+
+;;;; Exercise 2.15: list-of-first-items
+
+(define list-of-first-items
+  (lambda (ls)
+    (cond
+     ((null? ls) '())
+     (else (cons (caar ls)
+		 (list-of-first-items (cdr ls)))))))
+
+(list-of-first-items '((a) (b c d) (e f)))
+(list-of-first-items '((1 2 3)  (4 5 6)))
+(list-of-first-items '((one)))
+(list-of-first-items '())
+
+;;;; Exercise 2.16: replace
+
+
+;;; 2.5 Tracing and Debugging 
+
+(begin
+  (write "The remove-1st expression")
+  (write "is applied to the list (1 2 3 4)")
+  (write "to build a new list without the number 2.")
+  (remove-1st 2 '(1 2 3 4)))
 
 
