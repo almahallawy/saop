@@ -398,6 +398,111 @@
 
 ;;;; Exercise 2.16: replace
 
+(define replace
+  (lambda (new-item ls)
+    (cond
+     ((null? ls) '())
+     (else (cons new-item (replace new-item (cdr ls)))))))
+
+(replace 'no '(will you do me a favor))
+(replace 'yes '(do you like ice cream))
+(replace 'why '(not))
+(replace 'maybe '())
+
+
+;;;; Exercise 2.17
+(define remove-2nd
+  (lambda (item ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) item)
+      (cons (car ls) (remove-1st item (cdr ls))))
+     (else (cons (car ls) (remove-2nd item (cdr ls)))))))
+
+(remove-2nd 'cat '(my cat loves cat food))
+(remove-2nd 'cat '(my cat loves food))
+(remove-2nd 'cat '(my cat and your cat loves cat food))
+(remove-2nd 'cat '())
+
+;;;; Exercise 2.18
+
+(define remove-last
+  (lambda (item ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) item)
+      (if (member? item (cdr ls))
+	  (cons (car ls) (remove-last item (cdr ls)))
+	  (cdr ls)))
+     (else (cons (car ls)
+		 (remove-last item (cdr ls)))))))
+
+(remove-last 'a '(b a n a n a s))
+(remove-last 'a '(b a n a n a))
+(remove-last 'a '())
+
+;;;; Exercise 2.19
+(define sandwich-1st
+  (lambda (a b ls)
+    (cond
+     ((null? ls) '())
+     ((null? (cdr ls)) ls)
+     ((equal? (car ls) b)
+      (if (equal? (cadr ls) b)
+	  (cons (car ls)
+		(cons a (cdr ls)))
+	  (cons (car ls)
+		(sandwich-1st a b (cdr ls)))))
+     (else (cons (car ls)
+		 (sandwich-1st a b (cdr ls)))))))
+
+(sandwich-1st 'meat 'bread '(bread cheese bread bread))
+(sandwich-1st 'meat 'bread '(bread  jam bread cheese bread))
+(sandwich-1st 'meat 'bread '())
+
+;;;; Exercise 2.20
+
+(define list-of-symbols?
+  (lambda (ls)
+    (cond
+     ((null? ls) #t)
+     ((symbol? (car ls)) (list-of-symbols? (cdr ls)))
+     (else #f))))
+
+(define list-of-symbols?
+  (lambda (ls)
+    (if (null? ls)
+	#t
+	(if (symbol? (car ls))
+	    (list-of-symbols? (cdr ls))
+	    #f))))
+
+(define list-of-symbols?
+  (lambda (ls)
+    (or (null? ls)
+	(and (symbol? (car ls))
+	     (list-of-symbols? (cdr ls))))))
+
+(list-of-symbols? '(one two three four five))
+(list-of-symbols? '(cat dog (hen pig) cow))
+(list-of-symbols? '(a b 3 4 d))
+(list-of-symbols? '())
+
+;;;; Exercise 2.21
+(define all-same?
+  (lambda (ls)
+    (cond
+     ((null? ls) #t)
+     ((null? (cdr ls)) #t)
+     ((equal? (car ls) (cadr ls))
+      (all-same? (cdr ls)))
+     (else #f))))
+
+(all-same? '(a a a a a))
+(all-same? '(a b a b a b))
+(all-same? '((a b) (a b) (a b)))
+(all-same? '(a))
+(all-same? '())
 
 ;;; 2.5 Tracing and Debugging 
 
