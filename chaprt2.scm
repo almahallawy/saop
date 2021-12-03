@@ -504,12 +504,165 @@
 (all-same? '(a))
 (all-same? '())
 
-;;; 2.5 Tracing and Debugging 
+;;; 2.5 Tracing and Debugging
+
+;; - Program 7.5, pg. 199 -
+(define writeln
+  (lambda args
+    (for-each display args)
+    (newline)))
+
 
 (begin
-  (write "The remove-1st expression")
-  (write "is applied to the list (1 2 3 4)")
-  (write "to build a new list without the number 2.")
+  (writeln "The remove-1st expression")
+  (writeln "is applied to the list (1 2 3 4)")
+  (writeln "to build a new list without the number 2.")
   (remove-1st 2 '(1 2 3 4)))
 
+(begin
+  (+ 3 4)
+  (- 5 11)
+  (* 10 10))
+
+
+;; - Program 2.5, pg. 62 -
+(define remove-1st-trace
+  (lambda (item ls)
+    (cond
+     ((entering (null? ls) ls 1)
+      (leaving '() 1))
+     ((entering (equal? (car ls) item) ls 2)
+      (leaving (cdr ls) 2))
+     ((entering 'else ls 3)
+      (leaving
+       (cons (car ls) (remove-1st-trace item (cdr ls)))
+       3)))))
+
+
+;; - Program 2.6, pg. 62 -
+(define entering
+  (lambda (test input cond-clause-number)
+    (begin
+      (if test (writeln "   Entering cond-clause-"
+			cond-clause-number " with ls = " input))
+      test)))
+
+;; - Program 2.7, pg. 62 -
+(define leaving
+  (lambda (result cond-clause-number)
+    (begin
+      (writeln "Leaving cond-clause-" 
+	       cond-clause-number " with result = " result)
+      result)))
+
+(remove-1st-trace 'c '(a b c d))
+
+(remove-1st-trace 'e '(a b c d))
+
+;;;; Exercise 2.22
+;; we cannot have a trace enter first and second because both are terminating condition
+
+
+(define swapper
+  (lambda (x y ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) x)
+      (cons y (swapper x y (cdr ls))))
+     ((equal? (car ls) y)
+      (cons x (swapper x y (cdr ls))))
+     (else (cons (car ls)
+		 (swapper x y (cdr ls)))))))
+
+(define swapper
+  (lambda (x y ls)
+    (cond
+     ((null? ls) '())
+     (else (cons (swap-tester x y (car ls))
+		 (swapper x y (cdr ls)))))))
+
+(define swap-tester
+  (lambda (x y a)
+    (cond
+     ((equal? a x) y)
+     ((equal? a y) x)
+     (a))))
+
+(define swapper
+  (lambda (x y ls)
+    (cond
+     ((null? ls) '())
+     (else (cons (cond
+		  ((equal? (car ls) x) y)
+		  ((equal? (car ls) y) x)
+		  (else (car ls)))
+		 (swapper x y (cdr ls)))))))
+
+(swapper 'cat 'dog '(my cat eats dog food))
+(swapper 'john 'mary '(john loves mary))
+(swapper 'a 'b  '(c (a b) d))
+(swapper 'a 'b '())
+(swapper 'b 'd '(a b c d b))
+
+;;;; Exercise 2.23
+(begin
+  (writeln "(* 3 4) = " (* 3 4))
+  (= (* 3 4) 12))
+
+;;returned => #t
+
+;;printed
+;; (* 3 4) = 12
+
+
+(begin
+  (writeln "(cons 'a '(b c)) has the value " (cons 'a '(b c)))
+  (writeln "(cons 'a '(b c)) has the value " '(a b c))
+  (writeln "(cons 'a '(b c)) has the value (a b c)")
+  (cons 'a '(b c)))
+
+;; returned => (a b c)
+
+;;printed
+;; (cons 'a '(b c)) has the value (a b c)
+;; (cons 'a '(b c)) has the value (a b c)
+;; (cons 'a '(b c)) has the value (a b c)
+
+
+(begin
+  (writeln "Hello, how are you?")
+  (writeln "Fine, thank you. How are you?" 'Jack)
+  (writeln "Just great! It is good to see you again, " 'Jill)
+  "Good-bye. Have a nice day.")
+
+;; returned=> "Good-bye. Have a nice day."
+
+;;printed
+;; Hello, how are you?
+;; Fine, thank you. How are you?Jack
+;; Just great! It is good to see you again, Jill
+
+
+;;;; Exercise 2.24
+(define describe
+  (lambda (s)
+    (cond
+     ((null? s) (quote '()))
+     ((number? s) s)
+     ((symbol? s) (list 'quote s))
+     ((pair? s) (list 'cons (describe (car s)) (describe (cdr s))))
+     (else s))))
+
+(describe 347)
+;; => 347
+(describe 'hello)
+;; => (quote hello)
+(describe '(a))
+;; => (cons (quote a) (quote ()))
+(describe '(a b))
+;; => (cons (quote a) (cons (quote b) (quote ())))
+(describe '(1 2 button my shoe))
+;; => (cons 1 (cons 2 (cons (quote button) (cons (quote my) (cons (quote shoe) (quote ()))))))
+(describe '(a (b c (d e) f g) h))
+;; => (cons (quote a) (cons (cons (quote b) (cons (quote c) (cons (cons (quote d) (cons (quote e) (quote ()))) (cons (quote f) (cons (quote g) (quote ())))))) (cons (quote h) (quote ()))))
 
