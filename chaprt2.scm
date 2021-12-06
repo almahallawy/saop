@@ -207,6 +207,8 @@
 
 
 ;;; 2.4 Recursion
+
+;; - Program 2.2, pg. 47 -
 (define last-item
   (lambda (ls)
     (cond
@@ -218,6 +220,7 @@
 (last-item '(cat))
 (last-item '((cat)))
 
+;; - Program 2.3, pg. 50 -
 (define member?
   (lambda (item ls)
     (cond
@@ -666,3 +669,147 @@
 (describe '(a (b c (d e) f g) h))
 ;; => (cons (quote a) (cons (cons (quote b) (cons (quote c) (cons (cons (quote d) (cons (quote e) (quote ()))) (cons (quote f) (cons (quote g) (quote ())))))) (cons (quote h) (quote ()))))
 
+;;*describe* describes how to make number, symbole, and list.
+
+;;;; Exercise 2.25
+;; use the same entering and leaving procedures above
+(define swapper-trace
+  (lambda (x y ls)
+    (cond
+     ((entering (null? ls) ls 1)
+      (leaving '() 1))
+     ((entering (equal? (car ls) x) ls 2)
+      (leaving (cons y (swapper-trace x y (cdr ls))) 2))
+     ((entering (equal? (car ls) y) ls 3)
+      (leaving (cons x (swapper-trace x y (cdr ls))) 3))
+     ((entering 'else ls 4)
+      (leaving (cons (car ls) (swapper-trace x y (cdr ls))) 4)))))
+
+(swapper-trace 'b 'd '(a b c d b))
+;; => (a d c b d)
+
+;;    Entering cond-clause-4 with ls = (a b c d b)
+;;    Entering cond-clause-2 with ls = (b c d b)
+;;    Entering cond-clause-4 with ls = (c d b)
+;;    Entering cond-clause-3 with ls = (d b)
+;;    Entering cond-clause-2 with ls = (b)
+;;    Entering cond-clause-1 with ls = ()
+;; Leaving cond-clause-1 with result = ()
+;; Leaving cond-clause-2 with result = (d)
+;; Leaving cond-clause-3 with result = (b d)
+;; Leaving cond-clause-4 with result = (c b d)
+;; Leaving cond-clause-2 with result = (d c b d)
+;; Leaving cond-clause-4 with result = (a d c b d)
+
+
+;;;; Exercise 2.26
+(last-item '(a b c))
+
+;; answer1: (last-item '(b c))
+;; answer1: (answer2)
+;; answer2: (last-item '(c))
+;; answer2: (answer3)
+;; answer3: c
+;; answer2: c
+;; answer1: c
+
+
+(member? 'c '(a b c d))
+
+;; answer1: (member? 'c '(b c d))
+;; answer1: (answer2)
+;; answer2: (member? 'c (c d))
+;; answer2: (answer3)
+;; answer3: (member? 'c '(c))
+;; answer3: #t
+;; answer2: #t
+;; answer1: #t
+
+
+;;;; Exercise 2.27
+;;Swapper with cond2 and cond2 interchanged
+(define swapper
+  (lambda (x y ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) y)
+      (cons x (swapper x y (cdr ls))))
+     ((equal? (car ls) x)
+      (cons y (swapper x y (cdr ls))))
+     (else (cons (car ls)
+		 (swapper x y (cdr ls)))))))
+
+(swapper 'cat 'dog '(my cat eats dog food))
+(swapper 'john 'mary '(john loves mary))
+(swapper 'a 'b  '(c (a b) d))
+(swapper 'a 'b '())
+(swapper 'b 'd '(a b c d b))
+
+;; Answer doesn't change by interchanging cond2 and cond3
+
+(define swapper
+  (lambda (x y ls)
+    (cond
+     ((null? ls) '())
+     (else (cons (swap-tester x y (car ls))
+		 (swapper x y (cdr ls)))))))
+
+;; interchange cond1 and cond2
+(define swap-tester
+  (lambda (x y a)
+    (cond
+     ((equal? a y) x)
+     ((equal? a x) y)     
+     (a))))
+;; Answer doesn't change by interchanging cond2 and cond3
+
+
+;;;; Exercise 2.28
+(define tracing
+  (lambda (message result)
+    (begin
+      (writeln message result)
+      result)))
+
+(define test-tracing
+  (lambda (test message input)
+    (begin (if test (tracing message input))
+	   test)))
+
+(define remove-1st-trace
+  (lambda (item ls)
+    (cond
+     ((test-tracing (null? ls)  "   Entering cond-clause-1 with ls = "  ls)
+      (tracing "Leaving cond-clause-1 with result = " '()))
+     ((test-tracing (equal? (car ls) item) "   Entering cond-clause-2 with ls = " ls)
+      (tracing "Leaving cond-clause-2 with result = " (cdr ls)))
+     ((test-tracing 'else "   Entering cond-clause-3 with ls = " ls)
+      (tracing "Leaving cond-clause-3 with result = "
+	       (cons (car ls) (remove-1st-trace item (cdr ls))))))))
+
+(remove-1st-trace 'c '(a b c d))
+
+;; => (a b d)
+
+;;    Entering cond-clause-3 with ls = (a b c d)
+;;    Entering cond-clause-3 with ls = (b c d)
+;;    Entering cond-clause-2 with ls = (c d)
+;; Leaving cond-clause-2 with result = (d)
+;; Leaving cond-clause-3 with result = (b d)
+;; Leaving cond-clause-3 with result = (a b d)
+
+(remove-1st-trace 'e '(a b c d))
+
+
+;; => (a b c d)
+
+;;    Entering cond-clause-3 with ls = (a b c d)
+;;    Entering cond-clause-3 with ls = (b c d)
+;;    Entering cond-clause-3 with ls = (c d)
+;;    Entering cond-clause-3 with ls = (d)
+;;    Entering cond-clause-1 with ls = ()
+;; Leaving cond-clause-1 with result = ()
+;; Leaving cond-clause-3 with result = (d)
+;; Leaving cond-clause-3 with result = (c d)
+;; Leaving cond-clause-3 with result = (b c d)
+;; Leaving cond-clause-3 with result = (a b c d)
