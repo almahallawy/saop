@@ -337,3 +337,200 @@
 ;;(list-ref ls 4)
 ;; will take only 4 cdr to (car ls) 4th element = 4 cdring
 
+;;; 3.3 Exact Arithmetic and Data Abstractions
+
+(define rzero?
+  (lambda (rtl)
+    (zero? (numr rtl))))
+
+(define r+
+  (lambda (x y)
+    (make-ratl
+     (+ (* (numr x) (denr y)) (* (numr y) (denr x)))
+     (* (denr x) (denr y)))))
+
+(define r*
+  (lambda (x y)
+    (make-ratl
+     (* (numr x) (numr y))
+     (* (denr x) (denr y)))))
+
+(define r-
+  (lambda (x y)
+    (make-ratl
+     (- (* (numr x) (denr y)) (* (numr y) (denr x)))
+     (* (denr x) (denr y)))))
+
+(define rinvert
+  (lambda (rtl)
+    (if (rzero? rtl)
+	(error "rinvert: Cannot invert " rtl)
+	(make-ratl (denr rtl) (numr rtl)))))
+
+(define r/
+  (lambda (x y)
+    (r* x (rinvert y))))
+
+
+(define r=
+  (lambda (x y)
+    (= (* (numr x) (denr y)) (* (numr y) (denr x)))))
+
+
+(define rpositive?
+  (lambda (rtl)
+    (or (and (positive? (numr rtl)) (positive? (denr rtl)))
+	(and (negative? (numr rtl)) (negative? (denr rtl))))))
+
+(define r>
+  (lambda (x y)
+    (rpositive? (r- x y))))
+
+(define r<
+  (lambda (x y)
+    (rpositive? (r- y x))))
+
+(define max
+  (lambda (x y)
+    (if (> x y)
+	x
+	y)))
+
+(define rmax
+  (lambda (x y)
+    (if (r> x y)
+	x
+	y)))
+
+(define rmin
+  (lambda (x y)
+    (if (r< x y)
+	x
+	y)))
+
+(define extreme-value
+  (lambda (pred x y)
+    (if (pred x y)
+	x
+	y)))
+
+(define rmax
+  (lambda (x y)
+    (extreme-value r> x y)))
+
+(define rmin
+  (lambda (x y)
+    (extreme-value r< x y)))
+
+
+(define max
+  (lambda (x y)
+    (extreme-value > x y)))
+
+(define min
+  (lambda (x y)
+    (extreme-value < x y)))
+
+;; - Program 7.5, pg. 199 -
+(define writeln
+  (lambda args
+    (for-each display args)
+    (newline)))
+
+(define rprint
+  (lambda (rtl)
+    (writeln (numr rtl) "/" (denr rtl))))
+
+;; Define rational numbers using list
+(define numr
+  (lambda (rtl)
+    (car rtl)))
+
+(define denr
+  (lambda (rtl)
+    (cadr rtl)))
+
+(define make-ratl
+  (lambda (int1 int2)
+    (if (zero? int2)
+	(error "make-ratl: The denominator cannot be zero.")
+	(list int1 int2))))
+
+;; Define rational numbers using dotted pair
+(define numr
+  (lambda (rtl)
+    (car rtl)))
+
+(define denr
+  (lambda (rtl)
+    (cdr rtl)))
+
+(define make-ratl
+  (lambda (int1 int2)
+    (if (zero? int2)
+	(error "make-ratl: The denominator cannot be zero.")
+	(cons int1 int2))))
+
+
+;;;; Exercise 3.14: rminus
+(define rminus
+  (lambda (rtl)
+    (make-ratl
+     (* (numr rtl) -1)
+     (denr rtl))))
+
+(define rr (make-ratl 1 2))
+(rminus rr)
+
+
+;;;; Exercise 3.15: same-sign?
+(define rpositive?
+  (lambda (rtl)
+    (same-sign? (numr rtl) (denr rtl))))
+
+
+(define same-sign?
+  (lambda (x y)
+    (positive? (* x y)))) ;;multiplication is efficient?
+
+(define same-sign?
+  (lambda (x y)
+    (or (and (positive? x) (positive? y))
+	(and (negative? x) (negative? y)))))
+
+(rpositive? (make-ratl 1 2))
+
+
+;;;; Exericse 3.16: rabs
+(define rabs
+  (lambda (rtl)
+    (make-ratl
+     (abs (numr rtl))
+     (abs (denr rtl)))))
+
+(rabs (make-ratl -1 -2))
+
+;;;; Exercise 3.17: make-ratl
+
+(gcd 8 12)
+(gcd 8 -12)
+(gcd 0 5)
+(gcd 12 15)
+(gcd 7 9)
+(gcd 0 8)
+
+
+(define make-ratl
+  (lambda (int1 int2)
+    (if (zero? int2)
+	(error "make-ratl: The denominator cannot be zero.")
+	(list
+	 (/ int1 (gcd int1 int2))
+	 (/ int2 (gcd int1 int2))))))
+
+(make-ratl 24 30)
+(make-ratl -10 15)
+(make-ratl 8 -10)
+(make-ratl -6 -9)
+(make-ratl 0 8)
+
