@@ -283,3 +283,27 @@
 (sum-all '((1 3) (5 7) (9 11)))
 (sum-all '(1 (3 (5 (7 (9))))))
 (sum-all '())
+
+
+;; 4.4 Tree Representation of Lists
+(define depth
+  (lambda (item)
+    (if (not (pair? item))
+	0
+	(max (add1 (depth (car item)))
+	     (depth (cdr item))))))
+
+(depth '(a (b c d) ((e f) g)))
+
+(define flatten
+  (lambda (ls)
+    (cond
+     ((null? ls) '())
+     ((pair? (car ls))
+      (append (flatten (car ls))
+	      (flatten (cdr ls))))
+     (else (cons (car ls) 
+		   (flatten (cdr ls)))))))
+
+
+(flatten '(a (b c d) ((e f) g)))
