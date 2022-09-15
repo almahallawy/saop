@@ -2,6 +2,14 @@
 
 ;; Chapter 2 - Procedures and Recursions
 
+;; M-x run-geiser
+;; C-x C-e evalute last expr
+;; C-c C-s Specify Scheme implementation for buffer
+;; switch from Scheme source buffers to the REPL or C-c C-z.
+;; Geiser tutorial read: https://www.nongnu.org/geiser/geiser_4.html
+;; https://gitlab.com/emacs-geiser/geiser
+
+
 ;;; 2.2 Procedures
 
 (define make-list-of-one
