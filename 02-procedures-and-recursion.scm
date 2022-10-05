@@ -240,7 +240,7 @@
 (member? 'fox '(dog hen cat pig))
 (member? 2 '(1 (2 3) 4))
 (member? '(2 3) '(1 (2 3) 4))
-(membe? 'cat '())
+(member? 'cat '())
 
 (memq 'b '(a b c))
 (memq 'cat '(dog hen cat pig))
@@ -451,6 +451,8 @@
 (remove-last 'a '(b a n a n a s))
 (remove-last 'a '(b a n a n a))
 (remove-last 'a '())
+(remove-last 'a '(b c d e))
+(remove-last 'a '(a b c d e))
 
 ;;;; Exercise 2.19
 (define sandwich-1st
