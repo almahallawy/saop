@@ -375,3 +375,123 @@
 (all-same? '((a b) (a b) (a b)))
 (all-same? '(a))
 (all-same? '())
+
+
+;;;; 2.5 Tracing and Debugging
+
+(progn (print 'Punch))
+
+
+
+(progn (print 'The\ cat\ in)
+       (print "the hat")
+       (print " came back"))
+
+(progn
+  (print "The remove-1st expression")
+  (print  "is applied to the list (1 2 3 4)")
+  (print "to build a new list without the number 2.")
+  (remove-1st 2 '(1 2 3 4)))
+
+(progn
+  (+ 3 4)
+  (- 5 11)
+  (* 10 10))
+
+
+(defun remove-1st-trace (item ls)
+  (cond
+   ((entering (null ls) ls 1)
+    (leaving '() 1))
+   ((entering (equal (car ls) item) ls 2)
+    (leaving (cdr ls) 2))
+   (t (entering 'else ls 3)
+    (leaving
+     (cons (car ls) (remove-1st-trace item (cdr ls)))
+     3))))
+
+(defun entering (test input cond-clause-number)
+  (progn
+    (if test (message "   Entering cond-clause-%d with ls = %s"
+		      cond-clause-number  input ))
+    test))
+
+
+(defun leaving (result cond-clause-number)
+  (progn
+    (message "Leaving cond-clause-%d with result = %s"
+	     cond-clause-number result)
+    result))
+
+
+(remove-1st-trace 'c '(a b c d))
+(remove-1st-trace 'e '(a b c d))
+
+
+(defun swapper (x y ls)
+  (cond
+   ((null ls) '())
+   ((equal (car ls) x)
+    (cons y (swapper x y (cdr ls))))
+   ((equal (car ls) y)
+    (cons x (swapper x y (cdr ls))))
+   (t (cons (car ls)
+	    (swapper x y (cdr ls))))))
+
+
+(defun swapper (x y ls)
+  (cond
+   ((null ls) '())
+   (t (cons (swap-tester x y (car ls))
+	    (swapper x y (cdr ls))))))
+
+(defun swap-tester (x y a)
+  (cond
+   ((equal a x) y)
+   ((equal a y) x)
+   (t a)))
+
+
+
+(defun swapper (x y ls)
+  (cond
+   ((null ls) '())
+   (t (cons (cond
+	     ((equal (car ls) x) y)
+	     ((equal (car ls) y) x)
+	     (t (car ls)))
+	    (swapper x y (cdr ls))))))
+
+(swapper 'cat 'dog '(my cat eats dog food))
+(swapper 'john 'mary '(john loves mary))
+(swapper 'a 'b  '(c (a b) d))
+(swapper 'a 'b '())
+(swapper 'b 'd '(a b c d b))
+
+
+(quote '())
+(list 'a 'b)
+;;;Ex 2.24
+
+(defun describe (s)
+  (cond
+   ((null s) (quote '()))
+   ((numberp s) s)
+   ((symbolp s) (list 'quote s))
+   ((consp s) (list 'cons (describe (car s)) (describe (cdr s))))
+   (t s)))
+
+(describe 347)
+;; => 347
+(describe 'hello)
+;; => (quote hello)
+(describe '(a))
+;; => (cons (quote a) (quote ()))
+(describe '(a b))
+;; => (cons (quote a) (cons (quote b) (quote ())))
+(describe '(1 2 button my shoe))
+;; => (cons 1 (cons 2 (cons (quote button) (cons (quote my) (cons (quote shoe) (quote ()))))))
+(describe '(a (b c (d e) f g) h))
+;; => (cons (quote a) (cons (cons (quote b) (cons (quote c) (cons (cons (quote d) (cons (quote e) (quote ()))) (cons (quote f) (cons (quote g) (quote ())))))) (cons (quote h) (quote ()))))
+
+

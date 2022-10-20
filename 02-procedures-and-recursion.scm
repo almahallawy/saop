@@ -737,7 +737,7 @@
 
 
 ;;;; Exercise 2.27
-;;Swapper with cond2 and cond2 interchanged
+;;Swapper with cond2 and cond3 interchanged
 (define swapper
   (lambda (x y ls)
     (cond
