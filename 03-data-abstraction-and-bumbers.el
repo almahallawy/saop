@@ -16,8 +16,7 @@
 (defun harmonic-sum (n)
   (cond
    ((zerop n) 0)
-   (t (+ (1 / n) (harmonic-sum (sub1 n))))))
-
+   (t (+ (/ 1 n) (harmonic-sum (sub1 n))))))
 
 (defun list-of-zeros (n)
   (cond

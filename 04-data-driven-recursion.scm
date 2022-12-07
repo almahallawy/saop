@@ -307,3 +307,362 @@
 
 
 (flatten '(a (b c d) ((e f) g)))
+
+
+(define remove-leftmost
+  (lambda (item ls)
+    (cond
+     ((null? ls) '())
+     ((equal? (car ls) item) (cdr ls))
+     ((not (pair? (car ls)))
+      (cons (car ls) (remove-leftmost item (cdr ls))))
+     ((member-all? item (car ls))
+      (cons (remove-leftmost item (car ls)) (cdr ls)))
+     (else (cons (car ls)
+		 (remove-leftmost item (cdr ls)))))))
+
+(define member-all?
+  (lambda (item ls)
+    (cond
+     ((null? ls) #f)
+     ((equal? (car ls) item) #t)
+     ((pair? (car ls))
+      (or (member-all? item (car ls))
+	  (member-all? item (cdr ls))))
+     (else (member-all?  item (cdr ls))))))
+
+(remove-leftmost 'b '(a (b c) (c (b a))))
+
+(remove-leftmost '(c d) '((a (b c)) ((c d) e)))
+ 
+;;;; Ex4.8: count-parens-all
+
+;; (count-parens-all '()) = 2
+;; (count-parens-all ls) =  (count-parens-all (cdr ls)) if (car ls) is atom
+;; (count-parens-all ls) = (count-parens-all (car ls)) + (count-parens-all (cdr ls)) if (car ls) is list 
+
+
+(define count-parens-all
+  (lambda (ls)
+    (cond
+     ((null? ls) 2)
+     ((pair? (car ls)) (+ (count-parens-all (car ls))
+			  (count-parens-all (cdr ls))))
+     ((null? (car ls)) (+ 2 (count-parens-all (cdr ls))))
+     (else (count-parens-all (cdr ls))))))
+
+(count-parens-all '())
+(count-parens-all '((a b) c))
+(count-parens-all '(((a () b) c) () ((d) e)))
+(count-parens-all '(() ()))
+
+
+;;;; Ex 4.9: count-background-all
+(define count-background-all
+  (lambda (item ls)
+    (cond
+     ((null? ls) 0)
+     ((pair? (car ls))
+      (+ (count-background-all item (car ls))
+	 (count-background-all item (cdr ls))))
+     ((eq? (car ls) item)
+      (count-background-all item (cdr ls)))
+     (else (1+ (count-background-all item (cdr ls)))))))
+
+(count-background-all 'a '((a) b (c a) d))
+(count-background-all 'a '((((b (((a)) c))))))
+(count-background-all 'b '())
+
+;;;; Ex4.10: leftmost
+(define leftmost
+  (lambda (ls)
+    (cond
+     ((null? ls) '())
+     ((pair? (car ls)) (leftmost (car ls)))
+     (else (car ls)))))
+
+(leftmost '((a b) (c (d e))))
+(leftmost '((((c ((e f) g) h)))))
+(leftmost '(() a))
+
+;;;; Ex4.11: rightmost
+(define rightmost
+  (lambda (ls)
+    (cond
+     ((null? ls) '())
+     ((pair? (cdr ls)) (rightmost (cdr ls)))
+     ((pair? (car ls)) (rightmost (car ls)))
+     (else (car ls)))))
+
+(rightmost '((a b) (d (c d (f (g h) i) m n) u) v))
+(rightmost '(((((b (c)))))))
+(rightmost '(a ()))
+
+;; 4.5 Numerical Recursion and Iteration
+(define fact
+  (lambda (n)
+    (if (zero? n)
+	1
+	(* n (fact (1- n))))))
+
+(fact 5) 
+(fact 3)
+
+
+(define fact-it
+  (lambda (n acc)
+    (if (zero? n)
+	acc
+	(fact-it (1- n) (* n acc)))))
+
+(fact-it 5 1)
+(fact-it 3 1)
+
+(define fact
+  (lambda (n)
+    (fact-it n 1)))
+
+(fact 5)
+
+
+;;;;Ex4.12
+(fact-it 10 1)
+(fact 10)
+
+(fact-it 20 1)
+(fact 20)
+
+(fact-it 30 1)
+(fact 30)
+
+
+(fact-it 40 1)
+(fact 40)
+
+(fact-it 50 1)
+(fact 50)
+
+(fact-it 100 1)
+(fact 100)
+
+;;;;Ex4.13 harmonic-sum-it
+
+(define harmonic-sum
+  (lambda (n)
+    (cond
+      ((zero? n) 0)
+      (else (+ (/ 1 n) (harmonic-sum (1- n)))))))
+
+(harmonic-sum 3)
+(harmonic-sum 4)
+;; n    acc
+;; 3    0
+;; 2    1/3
+;; 1    1/3 + 1/2
+;; 0    1/3 + 1/2 + 1/1
+
+(define harmonic-sum-it
+  (lambda (n acc)
+    (if (zero? n)
+	acc
+	(harmonic-sum-it (1- n) (+ (/ 1 n) acc)))))
+
+(harmonic-sum-it 3 0)
+(harmonic-sum-it 4 0)
+
+(harmonic-sum-it 100 0)
+
+;; 4.6 Analyzing the Fibonacci Algorithm
+
+(define fib
+  (lambda (n)
+    (if (< n 2)
+	n
+	(+ (fib (- n 1)) (fib (- n 2))))))
+
+(fib 0)
+(fib 1)
+(fib 2)
+(fib 3)
+(fib 4)
+
+
+(define fib-it
+  (lambda (n acc1 acc2)
+    (if (= n 1)
+	acc2
+	(fib-it (1- n) acc2 (+ acc1 acc2)))))
+
+(define fib
+  (lambda (n)
+    (if (zero? n)
+	0
+	(fib-it n 0 1))))
+
+(fib-it 6 0 1)
+(fib 6)
+
+
+(define reverse-it
+  (lambda (ls acc)
+    (if (null? ls)
+	acc
+	(reverse-it (cdr ls) (cons (car ls) acc)))))
+
+(define reverse
+  (lambda (ls)
+    (reverse-it ls '())))
+
+(reverse '(1 2 4))
+
+
+
+;;;; EX4.15
+
+;; - Program 7.5, pg. 199 -
+(define writeln
+  (lambda args
+    (for-each display args)
+    (newline)))
+
+(define fib
+  (lambda (n)
+    (writeln "n = " n)
+    (if (< n 2)
+	n
+	(+ (fib (- n 1))
+	   (fib (- n 2))))))
+
+(fib 4)
+;; => 3
+
+;; n = 4
+;; n = 3
+;; n = 2
+;; n = 1
+;; n = 0
+;; n = 1
+;; n = 2
+;; n = 1
+;; n = 0
+
+(fib 5)
+(fib 6)
+
+
+;;;;Ex 4.16
+(define fib-it
+  (lambda (n acc1 acc2)
+    (writeln "n = " n ", acc1 = " acc1 ", acc2 - " acc2)
+    (if (= n 1)
+	acc2
+	(fib-it (1- n) acc2 (+ acc1 acc2)))))
+
+(fib-it 4 0 1)
+
+;; => 3
+
+;; n = 4, acc1 = 0, acc2 - 1
+;; n = 3, acc1 = 1, acc2 - 1
+;; n = 2, acc1 = 1, acc2 - 2
+;; n = 1, acc1 = 2, acc2 - 3
+
+
+
+;;;;Ex 4.17
+
+(define calls-fib
+  (lambda (n)
+    (1+ (* 2 (1- (fib (1+ n)))))))
+
+(define adds-fib
+  (lambda (n)
+    (1- (fib (1+ n)))))
+
+
+(fib 0)
+(calls-fib 0)
+(adds-fib 0)
+
+(fib 1)
+(calls-fib 1)
+(adds-fib 1)
+
+(fib 2)
+(calls-fib 2)
+(adds-fib 2)
+
+(fib 3)
+(calls-fib 3)
+(adds-fib 3)
+
+(fib 4)
+(calls-fib 4)
+(adds-fib 4)
+
+(fib 5 )
+(calls-fib 5)
+ (adds-fib 5)
+
+
+;;; Ex4.18 length-it
+
+(define length-it
+  (lambda (ls acc)
+    (if (null? ls)
+	acc
+	(length-it (cdr ls) (1+ acc)))))
+
+
+
+(length-it '(1 2 3 4 ) 0)
+
+;;;; Ex 4.19
+(define mk-asc-list-of-ints
+  (lambda (n acc)
+    (if (zero? n)
+	acc
+	(mk-asc-list-of-ints (1- n)
+			     (cons n acc)))))
+
+(mk-asc-list-of-ints 10 '())
+
+
+(define mk-desc-list-of-ints
+  (lambda (n)
+    (reverse (mk-asc-list-of-ints n '()))))
+
+
+(mk-desc-list-of-ints 6)
+
+
+;;;; Ex4.20
+(define occurs
+  (lambda (ls a)
+    (cond
+     ((null? ls) 0)
+     ((eq? (car ls) a)
+      (1+ (occurs (cdr ls) a)))
+     (else (occurs (cdr ls) a)))))
+
+(occurs '(a b a c a d) 'a)
+(occurs '(b c a (b a) c a) 'a)
+(occurs '(b (c d)) 'a)
+
+
+(define occurs-it
+  (lambda (ls a acc)
+    (cond
+     ((null? ls) acc)
+     ((eq? (car ls) a)
+      (occurs-it (cdr ls) a (1+ acc)))
+     (else (occurs-it (cdr ls) a acc)))))
+
+
+(occurs-it '(a b a c a d) 'a 0)
+(occurs-it '(b c a (b a) c a) 'a 0)
+(occurs-it '(b (c d)) 'a 0)
+
+
+
+

@@ -252,3 +252,194 @@
 (sum-all '(1 (3 (5 (7 (9))))))
 (sum-all '())
 
+;; 4.4 Tree Representation of Lists
+
+(defun depth (item)
+  (if (not (consp item))
+      0
+    (max (1+ (depth (car item)))
+	 (depth (cdr item)))))
+
+(depth '(a (b c d) ((e f) g)))
+
+
+(defun flatten (ls)
+  (cond
+   ((null ls) '())
+   ((consp (car ls))
+    (append (flatten (car ls))
+	    (flatten (cdr ls))))
+   (t (cons (car ls)
+	    (flatten (cdr ls))))))
+
+(flatten '(a (b c d) ((e f) g)))
+
+
+(defun remove-leftmost (item ls)
+  (cond
+   ((null ls) '())
+   ((equal (car ls) item) (cdr ls))
+   ((not (consp (car ls)))
+    (cons (car ls) (remove-leftmost item (cdr ls))))
+   ((member-all? item (car ls))
+    (cons (remove-leftmost item (car ls)) (cdr ls)))
+   (t (cons (car ls)
+	    (remove-leftmost item (cdr ls))))))
+
+(defun member-all? (item ls)
+  (cond
+   ((null ls) nil)
+   ((equal (car ls) item) t)
+   ((consp (car ls))
+    (or (member-all? item (car ls))
+	(member-all? item (cdr ls))))
+   (t (member-all? item (cdr ls)))))
+
+(remove-leftmost 'b '(a (b c) (c (b a))))
+
+(remove-leftmost '(c d) '((a (b c)) ((c d) e)))
+
+;;;;Ex4.8: count-parens-all
+
+(listp '())
+(defun count-parens-all (ls)
+  (cond
+   ((null ls) 2)
+   ((listp (car ls))
+    (+ (count-parens-all (car ls))
+       (count-parens-all (cdr ls))))
+   (t (count-parens-all (cdr ls)))))
+
+(count-parens-all '())
+(count-parens-all '((a b) c))
+(count-parens-all '(((a () b) c) () ((d) e)))
+(count-parens-all '(() ()))
+
+;;;; Ex4.9: count-background-all
+
+(defun count-background-all (item ls)
+  (cond
+   ((null ls) 0)
+   ((consp (car ls))
+    (+ (count-background-all item (car ls))
+       (count-background-all item (cdr ls))))
+   ((eq (car ls) item)
+    (count-background-all item (cdr ls)))
+   (t (1+ (count-background-all item (cdr ls))))))
+
+(count-background-all 'a '((a) b (c a) d))
+(count-background-all 'a '((((b (((a)) c))))))
+(count-background-all 'b '())
+
+;;;;Ex 4.10
+
+(defun leftmost (ls)
+  (cond
+   ((null ls) '())
+   ((consp (car ls)) (leftmost (car ls)))
+   (t (car ls))))
+
+(leftmost '((a b) (c (d e))))
+(leftmost '((((c ((e f) g) h)))))
+(leftmost '(() a))
+
+;;;; Ex4.11 rightmost
+(defun rightmost (ls)
+  (cond
+   ((null ls) '())
+   ((consp (cdr ls)) (rightmost (cdr ls)))
+   ((consp (car ls)) (rightmost (car ls)))
+   (t (car ls))))
+
+(rightmost '((a b) (d (c d (f (g h) i) m n) u) v))
+(rightmost '(((((b (c)))))))
+(rightmost '(a ()))
+
+;; 4.5 Numerical Recursion and Iteration
+(defun fact (n)
+  (if (zerop n)
+      1
+    (* n (fact (1- n)))))
+
+(fact 5)
+(fact 3)
+
+
+(defun fact-it (n acc)
+  (if (zerop n)
+      acc
+    (fact-it (1- n) (* acc n))))
+
+(fact-it 5 1)
+
+(defun fact (n)
+  (fact-it n 1))
+
+(fact 3)
+
+
+;;; Ex4.13
+
+(defun harmonic-sum (n)
+  (cond
+   ((zerop n) 0)
+   (t (+ (/ 1.0 n)
+	 (harmonic-sum (1- n))))))
+
+
+(harmonic-sum 3)
+(harmonic-sum 4)
+;; n    acc
+;; 3    0
+;; 2    1/3
+;; 1    1/3 + 1/2
+;; 0    1/3 + 1/2 + 1/1
+
+(defun harmonic-sum-it (n acc)
+  (if (zerop n)
+      acc
+    (harmonic-sum-it (1- n)
+		     (+ (/ 1.0 n) acc))))
+
+(harmonic-sum-it 3 0)
+(harmonic-sum-it 4 0)
+
+
+
+;; 4.6 Analyzing the Fibonacci Algorithm
+(defun fib (n)
+  (if (< n 2)
+      n
+    (+ (fib (- n 1)) (fib (- n 2)))))
+
+(fib 0)
+(fib 1)
+(fib 2)
+(fib 3)
+(fib 4)
+
+
+(defun fib-it (n acc1 acc2)
+  (if (= n 1)
+      acc2
+    (fib-it (1- n) acc2 (+ acc1 acc2))))
+
+(defun fib (n)
+  (if (zerop n)
+      0
+    (fib-it n 0 1)))
+(fib-it 6 0 1)
+(fib 6)
+
+
+(defun reverse-it (ls acc)
+  (if (null ls)
+      acc
+    (reverse-it (cdr ls) (cons (car ls) acc))))
+
+(defun reverse (ls)
+  (reverse-it ls '()))
+
+(reverse '(1 2 4))
+
+;;; Check exercise solution from scheme implementation.
