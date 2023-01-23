@@ -242,3 +242,23 @@
 	#f)
     (even? (1- int))))
 
+
+
+;; Ex5.5
+(define mystery
+  (lambda (n)
+    (letrec
+	((mystery-helper
+	  (lambda (n s)
+	    (cond
+	     ((zero? n) (list s))
+	     (else
+	      (append
+	       (mystery-helper (1- n) (cons 0 s))
+	       (mystery-helper (1- n) (cons 1 s))))))))
+      (mystery-helper n '()))))
+
+(mystery 4);;All binary numbers of 4 bits = 2^4 = 16
+(mystery 3);;All binary numbers of 3 bits = 2^3 = 8
+;;(mystery n) All binary numbers of n bits = 2^n
+
