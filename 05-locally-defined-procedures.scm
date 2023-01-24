@@ -259,6 +259,74 @@
       (mystery-helper n '()))))
 
 (mystery 4);;All binary numbers of 4 bits = 2^4 = 16
+;; => ((0 0 0 0) (1 0 0 0) (0 1 0 0) (1 1 0 0) (0 0 1 0) (1 0 1 0) (0 1 1 0) (1 1 1 0) (0 0 0 1) (1 0 0 1) (0 1 0 1) (1 1 0 1) (0 0 1 1) (1 0 1 1) (0 1 1 1) (1 1 1 1))
+
 (mystery 3);;All binary numbers of 3 bits = 2^3 = 8
+;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
+
 ;;(mystery n) All binary numbers of n bits = 2^n
+
+
+;; Ex 5.6: insert-left-all
+(define insert-left-all
+  (lambda (new old ls)
+    (letrec
+	((insert-left
+	  (lambda (ls)
+	    (cond
+	     ((null? ls) '())
+	     ((pair? (car ls))
+	      (cons (insert-left (car ls))
+		    (insert-left (cdr ls))))
+	     ((equal? (car ls) old)
+	      (cons new (cons old
+			      (insert-left (cdr ls)))))
+	     (else (cons (car ls)
+			 (insert-left (cdr ls))))))))
+      (insert-left ls))))
+
+
+(insert-left-all 'z 'a '(a ((b a) ((a (c))))))
+(insert-left-all 'z 'a '(((a))))
+(insert-left-all 'z 'a '())
+
+
+
+;; Ex 5.7 fib
+(define fib
+  (lambda (n)
+    (letrec
+	((fib-it
+	  (lambda (n acc1 acc2)
+	    (if (= n 1)
+		acc2
+		(fib-it (1- n) acc2 (+ acc1 acc2))))))
+      (if (zero? n)
+	  0
+	  (fib-it n 0 1)))))
+
+(fib 6)
+
+;; Ex5.8 list-ref
+(define list-ref
+  (lambda (ls n)
+    (letrec
+	((list-ref-helper
+	  (lambda (ls n)
+	    (if (zero? n)
+		(car ls)
+		(list-ref-helper (cdr ls) (1- n))))))
+      (cond
+       ((<= (length ls) n)
+	(error "list-ref: Index" n "out of range for list" ls))
+       (else (list-ref-helper ls n))))))
+
+
+(list-ref '(a b c d e f) 3)
+(list-ref '(a b c d e f) 0)
+(list-ref '(a b c) 3)
+(list-ref '((1 2) (3 4) (5 6)) 1)
+(list-ref '() 0)
+
+
 
