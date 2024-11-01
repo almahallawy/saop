@@ -95,6 +95,12 @@ ls4
 (nil? (rest '(cat)))
 (nil? (first '((a b))))
 
+(empty? nil)
+(empty? '())
+(empty? (rest '(cat)))
+(empty? (first '((a b))))
+
+
 (fn? cons)
 (fn? +)
 (fn? 'cons)
