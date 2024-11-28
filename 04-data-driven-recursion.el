@@ -295,6 +295,9 @@
 	(member-all? item (cdr ls))))
    (t (member-all? item (cdr ls)))))
 
+(member-all? 'b '(a (b c) (c (b a))))
+(member-all? '(c d) '((a (b c)) ((c d) e)))
+
 (remove-leftmost 'b '(a (b c) (c (b a))))
 
 (remove-leftmost '(c d) '((a (b c)) ((c d) e)))
@@ -317,6 +320,7 @@
 
 ;;;; Ex4.9: count-background-all
 
+(consp '())
 (defun count-background-all (item ls)
   (cond
    ((null ls) 0)
@@ -443,3 +447,94 @@
 (reverse '(1 2 4))
 
 ;;; Check exercise solution from scheme implementation.
+
+
+;;Ex4.15
+(defun fib (n)
+  (message "n = %d" n)
+  (if (< n 2)
+      n
+    (+ (fib (- n 1)) (fib (- n 2)))))
+
+(fib 0)
+(fib 1)
+(fib 4)
+(fib 5)
+
+;;Ex4.16
+(defun fib-it (n acc1 acc2)
+  (message "n = %d, acc1 = %d, acc2 = %d" n acc1 acc2)
+  (if (= n 1)
+      acc2
+    (fib-it (1- n) acc2 (+ acc1 acc2))))
+
+(fib-it 4 0 1)
+
+;;Ex4.17
+(defun call-fib (n)
+  (1+ (* 2 (1- (fib (1+ n))))))
+
+(defun adds-fib (n)
+  (1- (fib (1+ n))))
+
+(call-fib 0)
+(adds-fib 0)
+(call-fib 1)
+(adds-fib 1)
+(call-fib 2)
+(adds-fib 2)
+(call-fib 3)
+(adds-fib 3)
+(call-fib 4)
+(adds-fib 4)
+(call-fib 5)
+(adds-fib 5)
+
+;;Ex 4.18
+(defun length-it (ls acc)
+  (if (null ls)
+      acc
+      (length-it (cdr ls) (1+ acc))))
+
+
+(length-it '(1 2 3 4 5) 0)
+
+
+;;Ex 4.19
+(defun mk-asc-list-of-ints (n acc)
+  (if (zerop n)
+      acc
+    (mk-asc-list-of-ints (1- n) (cons n acc))))
+
+(mk-asc-list-of-ints 6 '())
+
+(defun mk-desc-list-of-ints (n)
+  (if (zerop n)
+      '()
+    (cons n (mk-desc-list-of-ints (1- n)))))
+
+(mk-desc-list-of-ints 6)
+
+;;Ex 4.20
+
+(defun occurs (ls item)
+  (cond
+   ((null ls) 0) 
+   ((equal (car ls) item)
+    (1+ (occurs (cdr ls) item)))
+   (t (occurs (cdr ls) item))))
+
+(occurs '(a b a c a d) 'a)
+(occurs '(b c a (b a) c a) 'a)
+(occurs '(b (c d)) 'a)
+
+(defun occurs-it (ls item acc)
+  (cond
+   ((null ls) acc)
+   ((equal (car ls) item)
+    (occurs-it (cdr ls) item (1+ acc)))
+   (t (occurs-it (cdr ls) item acc))))
+
+(occurs-it '(a b a c a d) 'a 0)
+(occurs-it '(b c a (b a) c a) 'a 0)
+(occurs-it '(b (c d)) 'a 0)
