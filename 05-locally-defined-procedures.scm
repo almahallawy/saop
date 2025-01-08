@@ -2,6 +2,25 @@
 
 ;; Chapter 5: Locally Defined Procedures
 
+((lambda (x)
+   ((lambda (y)
+      (- x y))
+    15))
+ 20)
+
+(let ((a +) (b 3))
+  (a 2 b))
+
+(let ((add2 (lambda (x) (+ x 2)))
+      (b (* 3 (/ 2 12))))
+  (/ b (add2 b)))
+
+(let ((a 2) (b 3))
+  (+ a b))
+;; is equivelant to
+
+((lambda (a b) (+ a b)) 2 3)
+
 (define remove-leftmost
   (lambda (item ls)
     (cond
