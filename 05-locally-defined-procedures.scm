@@ -18,8 +18,24 @@
 (let ((a 2) (b 3))
   (+ a b))
 ;; is equivelant to
-
 ((lambda (a b) (+ a b)) 2 3)
+
+
+(define addb
+  (let ((b 100))
+    (lambda (x)
+      (+ x b))))
+
+(let ((b 10))
+  (addb 25))
+
+
+(let ((b 2))
+  (let ((add2 (lambda (x) (+ x b)))
+	(b 0.5))
+    (/ b (add2 b))))
+
+
 
 (define remove-leftmost
   (lambda (item ls)
@@ -41,16 +57,16 @@
 
 (remove-leftmost '(c d) '((a (b c)) ((c d) e)))
 
-
+;; the following code will result in error:
+;; "Unbound variable: fact"
+;; This message refers to the fact occuring in the lambda expression,
+;;which is not bound outside of the let expression
 (let ((fact (lambda (n)
 	      (if (zero? n)
 		  1
 		  (* n (fact (1- n)))))))
   (fact 4))
 
-;;==>Error
-;; ice-9/boot-9.scm:1669:16: In procedure raise-exception:
-;; Unbound variable: fact
 
 (let ((fact (lambda (n)
 	      (if (zero? n)
@@ -75,12 +91,42 @@
   (odd? 17))
 
 
+(define fact
+  (lambda (n)
+    (letrec ((fact-it 
+               (lambda (k acc)
+                 (if (zero? k)
+                     acc
+                     (fact-it (1- k) (* k acc))))))
+      (fact-it n 1))))  
+
+(fact 4)
+
+
+(define swapper
+  (lambda (x y ls)
+    (letrec
+      ((swap
+         (lambda (ls*)
+           (cond 
+             ((null? ls*) '())
+             ((equal? (car ls*) x) (cons y (swap (cdr ls*))))
+             ((equal? (car ls*) y) (cons x (swap (cdr ls*))))
+             (else (cons (car ls*) (swap (cdr ls*))))))))
+      (swap ls))))
+
+(swapper 'cat 'dog '(my cat eats dog food))
+(swapper 'john 'mary '(john loves mary))
+(swapper 'a 'b  '(c (a b) d))
+(swapper 'a 'b '())
+(swapper 'b 'd '(a b c d b))
+
 
 ;;Ex 5.1
 
-(let ((a 5)) ;; Env1
-  (let ((fun (lambda (x) (max x a)))) ;; Env2, a = 5
-    (let ((a 10);;Evn3
+(let ((a 5))			      ;;Env1
+  (let ((fun (lambda (x) (max x a)))) ;Env2, a bound to 5 in Env1, x bound to 1 from fn param passing
+    (let ((a 10)		      ;;Evn3
 	  (x 20))
       (fun 1))))
 ;;=> 5
@@ -102,9 +148,16 @@
 ;; Env2: b=3, (+ a=1 b=2) => c=3
 ;; Env3: b=5 (cons a=1 (cons b=5 (cons c=3 '())))
 
+;; Note the differnce between Clojure in Scheme in let evaluatoin order
+;; in Clojure, the bindings in a let form are evaluated in the order they are written, and each binding can depend on the previous ones. This means you can use the value of a previously defined binding in the definition of a subsequent binding.
+;;This code will fail in scheme
+(let ((a 1)
+      (b a))
+  (+ a b))
 
 
 ;; Ex 5.2
+;;b
 (letrec
     ((loop
       (lambda (n k)
@@ -120,7 +173,7 @@
 ;; (loop 3 (remainder 9 3)) -> (loop 3 0)
 ;; 3 (zero? k=0)
 
-
+;;b
 (letrec
     ((loop
       (lambda (n)
@@ -129,7 +182,7 @@
 	    (+ (remainder n 10)
 	       (loop (quotient n 10)))))))
   (loop 1234))
-
+;;calculates the sum of the digits of a given number
 (remainder 1234 10)
 (quotient 1234 10)
 
@@ -193,7 +246,7 @@
 ;; (let ((b 5))
 ;;   (cons a (cons b (cons c '()))))
 ;; ==
-;; ((lambda (b)
+ ;; ((lambda (b)
 ;;    (cons a (cons b (cons c '())))) 5)
 
 (let ((a 1) (b 2))
