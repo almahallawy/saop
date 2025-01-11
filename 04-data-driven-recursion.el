@@ -3,11 +3,14 @@
 ;; Chapter 4: Data Driven Recursion
 
 ;;; 4.2 Flat Recursion
+;;NOTE-BE Careful- elisp has built-in append which is a core function used extensively
+;;the defintion below will redefine the build-in append and will cause emacs to misbehave.
+;; Use different name for appen -> my-append
 (defun append (ls1 ls2)
   (if (null ls1)
       ls2
-    (cons (car ls1)
-	  (append (cdr ls1) ls2))))
+      (cons (car ls1)
+	    (append (cdr ls1) ls2))))
 
 (append '(a b c) '(c d))
 (append '() '(a b c))

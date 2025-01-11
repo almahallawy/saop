@@ -522,7 +522,7 @@
     (+ (fib (- n 1)) (fib (- n 2)))))
 
 (fib 3)
-(fib 5)0
+(fib 5)
 
 (defn fib-it [n acc1 acc2]
   (if (= n 1)

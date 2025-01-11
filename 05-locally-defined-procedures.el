@@ -225,3 +225,107 @@
 	 (cons a (cons b (cons c '())))) 5))
     3 (+ a b)))
  1 2)
+
+
+;;Ex5.4
+
+;; Do NOT create append functiln as it will provide the built-in elisp
+;; Append is a core function, redefining it will break emacs
+(defun even? (int)
+  (if (zerop int)
+      t
+    (odd? (1- int))))
+
+(defun odd? (int)
+  (if (zerop int)
+      nil
+    (even? (1- int))))
+
+(letrec ((mystery
+	  (lambda (tuple odds evens)
+	    (if (null tuple)
+		(append odds evens)
+		(let ((next-int (car tuple)))
+		  (if (odd? next-int)
+		      (funcall mystery (cdr tuple)
+			       (cons next-int odds) evens)
+		      (funcall mystery (cdr tuple)
+			       odds (cons next-int evens))))))))
+  (funcall mystery '(3 16 4 7 9 12 24) '() '()))
+
+;;Create a list where odds comes first then evens
+;;=> (9 7 3 24 12 4 16)
+
+
+;;Ex 5.5
+(defun mystery (n)
+  (letrec
+      ((mystery-helper
+	(lambda (n s)
+	  (cond
+	   ((zerop n) (list s))
+	   (t
+	    (append
+	     (funcall mystery-helper (1- n) (cons 0 s))
+	     (funcall mystery-helper (1- n) (cons 1 s))))))))
+    (funcall mystery-helper n '())))
+
+(mystery 4);;All binary numbers of 4 bits = 2^4 = 16
+;; => ((0 0 0 0) (1 0 0 0) (0 1 0 0) (1 1 0 0) (0 0 1 0) (1 0 1 0) (0 1 1 0) (1 1 1 0) (0 0 0 1) (1 0 0 1) (0 1 0 1) (1 1 0 1) (0 0 1 1) (1 0 1 1) (0 1 1 1) (1 1 1 1))
+
+(mystery 3);;All binary numbers of 3 bits = 2^3 = 8
+;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
+
+;;(mystery n) All binary numbers of n bits = 2^n
+
+
+;;Ex 5.6
+(defun insert-left-all (new old ls)
+  (letrec
+      ((insert-la
+	(lambda (ls)
+	  (cond
+	   ((null ls) '())
+	   ((eq (car ls) old)
+	    (cons new (cons old (funcall insert-la (cdr ls)))))
+	   ((consp (car ls))
+	    (cons (funcall insert-la (car ls))
+		  (funcall insert-la (cdr ls))))
+	   (t (cons (car ls)
+		    (funcall insert-la (cdr ls))))))))
+    (funcall insert-la ls)))
+
+(insert-left-all 'z 'a '(a ((b a) ((a (c))))))
+(insert-left-all 'z 'a '(((a))))
+(insert-left-all 'z 'a '())
+
+
+;;Ex5.7
+(defun fib (n)
+  (letrec ((fib-it
+	    (lambda (n acc1 acc2)
+	      (if (eq n 1)
+		  acc2
+		(funcall fib-it (1- n) acc2 (+ acc1 acc2))))))
+    (funcall fib-it n 0 1)))
+
+(fib 3)
+
+
+;;Ex5.8
+(defun list-ref (ls n)
+  (letrec ((list-ref-helper
+	    (lambda (ls n)
+	      (if (zerop n)
+		  (car ls)
+		(funcall list-ref-helper (cdr ls) (1- n))))))
+    (if (<= (length ls) n)
+	 (error  "Index %d out of range for list %s" n ls)
+      (funcall list-ref-helper ls n))))
+
+(list-ref '(a b c d e f) 3)
+(list-ref '(a b c d e f) 0)
+(list-ref '(a b c) 3)
+(list-ref '((1 2) (3 4) (5 6)) 1)q
+(list-ref '() 0)
+

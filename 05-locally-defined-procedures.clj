@@ -239,3 +239,120 @@
 ;;=================
 ;;Ex 5.4
 
+
+(defn append [ls1 ls2]
+  (if (empty? ls1)
+    ls2
+    (cons (first ls1) (append (rest ls1) ls2))))
+
+(defn even? [int]
+  (if (zero? int)
+    true
+    (odd? (dec int))))
+
+(defn odd? [int]
+  (if (zero? int)
+    false
+    (even? (dec int))))
+
+;;============
+;;Ex5.4
+
+
+(letfn [(mystery [tuple odds evens]
+          (if (empty? tuple)
+            (append odds evens)
+            (let [next-int (first tuple)]
+              (if (odd? next-int)
+                (mystery (rest tuple)
+                         (cons next-int odds) evens)
+                (mystery (rest tuple)
+                         odds (cons next-int evens))))))]
+  (mystery '(3 16 4 7 9 12 24) '() '()))
+
+;;Create a list where odds comes first then evens
+;;=> (9 7 3 24 12 4 16)
+
+;;=============
+;;Ex5.5
+
+(defn mystery [n]
+  (letfn
+      [(mystery-helper [n s]
+         (cond
+           (zero? n) (list s)
+
+           :else (append
+                  (mystery-helper (dec n) (cons 0 s))
+                  (mystery-helper (dec n) (cons 1 s)))))]
+    (mystery-helper n '())))
+
+(mystery 4);;All binary numbers of 4 bits = 2^4 = 16
+;; => ((0 0 0 0) (1 0 0 0) (0 1 0 0) (1 1 0 0) (0 0 1 0) (1 0 1 0) (0 1 1 0) (1 1 1 0) (0 0 0 1) (1 0 0 1) (0 1 0 1) (1 1 0 1) (0 0 1 1) (1 0 1 1) (0 1 1 1) (1 1 1 1))
+
+(mystery 3);;All binary numbers of 3 bits = 2^3 = 8
+;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
+
+;;(mystery n) All binary numbers of n bits = 2^n
+
+
+;;Ex5.6
+(defn insert-left-all [new old ls]
+  (letfn
+      [(insert-la [ls]
+         (cond
+           (empty? ls) '()
+
+           (= (first ls) old)
+           (cons new (cons old (insert-la (rest ls))))
+
+           (list? (first ls))
+           (cons (insert-la (first ls))
+                 (insert-la (rest ls)))
+
+           :else (cons (first ls)
+                       (insert-la (rest ls)))))]
+      (insert-la ls)))
+
+(insert-left-all 'z 'a '(a ((b a) ((a (c))))))
+(insert-left-all 'z 'a '(((a))))
+(insert-left-all 'z 'a '())
+
+;;Ex5.7
+(defn fib [n]
+  (letfn
+      [(fib-it [n acc1 acc2]
+         (if (= n 1)
+           acc2
+           (fib-it (dec n) acc2 (+ acc1 acc2))))]
+    (fib-it n 0 1)))
+
+(fib 4)
+
+
+;;Ex5.8
+
+(defn length [ls]
+  (if (empty? ls)
+    0
+    (inc (length (rest ls)))))
+
+(length '(1 2 3 4))
+(length '())
+
+(defn list-ref [ls n]
+  (letfn
+      [(list-ref-helper [ls n]
+         (if (zero? n)
+           (first ls)
+           (list-ref-helper (rest ls) (dec n))))]
+      (if (<= (length ls) n)
+        (throw (Exception. (str "list-ref: Index " n " out of range for list " ls)))
+        (list-ref-helper ls n))))
+
+(list-ref '(a b c d e f) 3)
+(list-ref '(a b c d e f) 0)
+(list-ref '(a b c) 3)
+(list-ref '((1 2) (3 4) (5 6)) 1)
+(list-ref '() 0)
+
