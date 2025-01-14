@@ -402,3 +402,262 @@
 
 
 
+;;5.3 Symbolic manipulation of Polynomials
+
+; - Program 5.14, pg. 151 -
+;; The five basic defintion (version I)
+
+(define sub1
+  (lambda (n)
+    (1- n)))
+
+(define list-of-zeros
+  (lambda (n)
+    (cond
+     ((zero? n) '())
+     (else (cons 0 (list-of-zeros (sub1 n)))))))
+
+
+(define the-zero-poly '(0))
+
+(define degree 
+  (lambda (poly)
+    (sub1 (length poly))))
+
+(define leading-coef
+  (lambda (poly)
+    (car poly)))
+
+(define rest-of-poly
+  (lambda (poly)
+    (cond
+      ((zero? (degree poly)) the-zero-poly)
+      ((zero? (leading-coef (cdr poly)))
+       (rest-of-poly (cdr poly)))
+      (else (cdr poly)))))
+
+(define poly-cons
+  (lambda (deg coef poly)
+    (let ((deg-p (degree poly)))
+      (cond
+        ((and (zero? deg) (equal? poly the-zero-poly)) (list coef))
+        ((< deg-p deg)
+         (if (zero? coef)
+             poly
+             (cons coef 
+                (append (list-of-zeros (sub1 (- deg deg-p))) 
+                        poly))))
+        (else (error "poly-cons: Degree too high in" poly))))))
+
+; - End Program -
+
+; - Program 5.15, pg. 153 -
+;; The five basic defintion (version II)
+
+(define the-zero-poly '((0 0)))
+
+(define degree
+  (lambda (poly)
+    (caar poly)))
+    
+(define leading-coef
+  (lambda (poly)
+    (cadar poly)))
+
+(define rest-of-poly 
+  (lambda (poly)
+    (if (null? (cdr poly))
+        the-zero-poly
+        (cdr poly))))
+
+(define poly-cons
+  (lambda (deg coef poly)
+    (let ((deg-p (degree poly)))
+      (cond 
+        ((and (zero? deg) (equal? poly the-zero-poly))
+         (list (list deg coef)))
+        ((< deg-p deg)
+         (if (zero? coef) 
+             poly
+             (cons (list deg coef) poly)))
+        (else (error "poly-cons: degree too high in" poly))))))
+
+; - End Program -
+
+
+
+; - Program 5.6, pg. 144 -
+
+(define zero-poly?
+  (lambda (poly)
+    (and (zero? (degree poly)) (zero? (leading-coef poly)))))
+
+; - End Program -
+
+; - Program 5.7, pg. 145 -
+
+(define make-term
+  (lambda (deg coef)
+    (poly-cons deg coef the-zero-poly))) 
+
+; - End Program -
+
+; - Program 5.8, pg. 145 -
+
+(define leading-term
+  (lambda (poly)
+    (make-term (degree poly) (leading-coef poly))))
+
+; - End Program -
+
+; - Program 5.9, pg. 146 -
+
+(define p+
+  (lambda (poly1 poly2)
+    (cond
+      ((zero-poly? poly1) poly2)
+      ((zero-poly? poly2) poly1)
+      (else (let ((n1 (degree poly1))
+                  (n2 (degree poly2))
+                  (a1 (leading-coef poly1))
+                  (a2 (leading-coef poly2))
+                  (rest1 (rest-of-poly poly1))
+                  (rest2 (rest-of-poly poly2)))
+              (cond 
+                ((> n1 n2) (poly-cons n1 a1 (p+ rest1 poly2)))
+                ((< n1 n2) (poly-cons n2 a2 (p+ poly1 rest2)))
+                (else 
+                 (poly-cons n1 (+ a1 a2) (p+ rest1 rest2))))))))) 
+
+; - End Program -
+
+; - Program 5.10, pg. 148 -
+
+(define p* 
+  (letrec 
+    ((t* (lambda (trm poly)
+           (if (zero-poly? poly)
+               the-zero-poly
+               (poly-cons 
+                 (+ (degree trm) (degree poly))
+                 (* (leading-coef trm) (leading-coef poly))
+                 (t* trm (rest-of-poly poly)))))))
+    (lambda (poly1 poly2)
+      (letrec
+        ((p*-helper (lambda (p1)
+                      (if (zero-poly? p1)
+                          the-zero-poly
+                          (p+ (t* (leading-term p1) poly2)
+                              (p*-helper (rest-of-poly p1)))))))
+        (p*-helper poly1)))))
+
+;;Organize the function little bit different than the book
+;;move p*-helper to letrec of t*
+
+(define p*
+  (lambda (poly1 poly2) 
+    (letrec 
+	((t* (lambda (trm poly)
+               (if (zero-poly? poly)
+		   the-zero-poly
+		   (poly-cons 
+                    (+ (degree trm) (degree poly))
+                    (* (leading-coef trm) (leading-coef poly))
+                    (t* trm (rest-of-poly poly))))))
+	 (p*-helper (lambda (p1)
+                      (if (zero-poly? p1)
+                          the-zero-poly
+                          (p+ (t* (leading-term p1) poly2)
+                              (p*-helper (rest-of-poly p1)))))))
+      (p*-helper poly1))))
+
+
+;; - End Program -
+;; - Program 5.11, pg. 148 -
+
+(define negative-poly
+  (lambda (poly) 
+    (let ((poly-negative-one (make-term 0 -1)))
+      (p* poly-negative-one poly))))
+
+; - End Program -
+
+; - Program 5.12, pg. 148 -
+
+(define p-
+  (lambda (poly1 poly2)
+    (p+ poly1 (negative-poly poly2))))  
+
+; - End Program -
+
+; - Program 5.13, pg. 150 -
+
+(define poly-value
+  (lambda (poly num)
+    (letrec 
+      ((pvalue (lambda (p)
+                 (let ((n (degree p)))
+                   (if (zero? n) 
+                       (leading-coef p)
+                       (let ((rest (rest-of-poly p)))
+                         (if (< (degree rest) (sub1 n))
+                             (pvalue (poly-cons
+                                       (sub1 n)
+                                       (* num (leading-coef p))
+                                       rest))
+                             (pvalue (poly-cons 
+                                       (sub1 n)
+                                       (+ (* num (leading-coef p))
+                                          (leading-coef rest))
+                                       (rest-of-poly rest))))))))))
+      (pvalue poly))))
+
+; - End Program 
+
+;;
+;;3x^4 + 5x^2 + 12
+(define p1
+  (poly-cons 4 3
+	     (poly-cons 2 5
+			(poly-cons 0 12 the-zero-poly))))
+
+;;7x^5 + 6x4 - x^2 + 11x - 15
+(define p2
+  (poly-cons 5 7
+	     (poly-cons 4 6
+			(poly-cons 2 -1
+				   (poly-cons 1 11
+					      (poly-cons 0 -15 the-zero-poly))))))
+
+;; p1+p2 = 7x^5 + 9x^4 + 4x^2 + 11x-3
+(poly-value (p+ p1 p2) 1) ;;7+9+4+11-3
+
+
+;;Ex5.9
+;;p1(x) = 5x^4 - 7x^3 +        2x - 4
+;;p2(x) =         x^3 + 6x^2 - 3x
+
+(define p1
+  (poly-cons 4 5
+	     (poly-cons 3 -7
+			(poly-cons 1 2
+				   (poly-cons 0 -4 the-zero-poly)))))
+
+(define p2
+  (poly-cons 3 1
+	     (poly-cons 2 6
+			(poly-cons 1 -3 the-zero-poly))))
+
+;;p1+p2 = 5x^4 - 6x^3 + 6x^2 - x - 4
+(poly-value (p+ p1 p2) 1) ;; 5-6+6-1-4 = 0
+
+;;p1-p2 = 5x^4 - 8x^3 - 6x^2 + 5x - 4
+(poly-value (p- p1 p2) 1) ;; 5-8-6+5-4 = -8
+
+;;p1*p2 =  5x^7 + 23x^6 - 57x^5 + 23x^4 + 8x^3 - 30x^2 + 12x
+(poly-value (p* p1 p2) 1) ;; = 5 + 23 - 57 + 23 + 8 - 30 + 12 = -16
+
+(poly-value p1 -1) ;; 5 + 7 - 2 -4 = 6
+(poly-value p1 2) ;; 5*16 - 7*8 + 2*2 -4 = 24
+(poly-value p2 0) ;; 0
+(poly-value p2 -2) ;; -8 + 6*4 - 3* -2 = 22
