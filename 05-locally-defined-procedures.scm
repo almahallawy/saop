@@ -630,7 +630,7 @@
 					      (poly-cons 0 -15 the-zero-poly))))))
 
 ;; p1+p2 = 7x^5 + 9x^4 + 4x^2 + 11x-3
-(poly-value (p+ p1 p2) 1) ;;7+9+4+11-3
+(poly-value (p+ p1 p2) 1) ;;7+9+4+11-3=28
 
 
 ;;Ex5.9
@@ -661,3 +661,234 @@
 (poly-value p1 2) ;; 5*16 - 7*8 + 2*2 -4 = 24
 (poly-value p2 0) ;; 0
 (poly-value p2 -2) ;; -8 + 6*4 - 3* -2 = 22
+
+
+;;Ex5.10
+
+(define p+
+  (lambda (poly1 poly2)
+    (cond
+      ((zero-poly? poly1) poly2)
+      ((zero-poly? poly2) poly1)
+      (else (let ((n1 (degree poly1))
+                  (n2 (degree poly2)))
+              (cond
+               ((> n1 n2)
+		(let ((a1 (leading-coef poly1))
+			(rest1 (rest-of-poly poly1)))
+		    (poly-cons n1 a1 (p+ rest1 poly2))))
+
+               ((< n1 n2)
+		(let ((a2 (leading-coef poly2))
+		      (rest2 (rest-of-poly poly2)))
+		  (poly-cons n2 a2 (p+ poly1 rest2))))
+
+               (else
+		(let ((a1 (leading-coef poly1))
+                      (a2 (leading-coef poly2))
+                      (rest1 (rest-of-poly poly1))
+                      (rest2 (rest-of-poly poly2)))
+                  (poly-cons n1 (+ a1 a2) (p+ rest1 rest2)))))))))) 
+
+;;Ex5.11
+
+
+
+(define poly-quotient
+  (lambda (p1 p2)
+    (let ((a2 (leading-coef p2))
+	  (n2 (degree p2)))
+      (letrec
+	  ((pq-helper
+	    (lambda (poly)
+	      (cond
+	       ((zero-poly? poly) the-zero-poly)
+	       ((< (degree poly) n2) the-zero-poly)
+	       (else (let ((term (make-term
+				  (- (degree poly) n2)
+				  (/ (leading-coef poly) a2))))
+		       (p+ term
+			   (pq-helper (p- poly
+					 (p* p2 term))))))))))
+	(pq-helper p1)))))
+
+
+(define poly-remainder
+  (lambda (p1 p2)
+    (let ((a2 (leading-coef p2))
+	  (n2 (degree p2)))
+      (letrec
+	  ((pr-helper
+	    (lambda (poly)
+	      (cond
+	       ((zero-poly? poly) the-zero-poly)
+	       ((< (degree poly) n2) poly)
+	       (else (let ((term (make-term
+				  (- (degree poly) n2)
+				  (/ (leading-coef poly) a2))))
+		       (pr-helper (p- poly
+				      (p* p2 term)))))))))
+	(pr-helper p1)))))
+
+
+;;p1 = x^3 - 2x^2 - 4
+(define p1
+  (poly-cons 3 1
+	     (poly-cons 2 -2
+			(poly-cons 0 -4 the-zero-poly))))
+
+(poly-value p1 1)
+
+;;p2 = x - 3
+(define p2
+  (poly-cons 1 1
+	     (poly-cons 0 -3 the-zero-poly)))
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x -3)(x^2 + x + 3) + 5
+
+
+(poly-value (poly-quotient p1 p2) 1) ;; 1+1+3=5
+(poly-value (poly-remainder p1 p2) 1)
+
+;;------------------------
+;;p1 = x^2 - 3x - 10
+(define p1
+  (poly-cons 2 1
+	     (poly-cons 1 -3
+			(poly-cons 0 -10 the-zero-poly))))
+
+(poly-value p1 1)
+
+;;p2 = x + 2
+(define p2
+  (poly-cons 1 1
+	     (poly-cons 0 2 the-zero-poly)))
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x + 3)(x - 5) + 0
+
+(poly-value (poly-quotient p1 p2) 1)
+(poly-value (poly-remainder p1 p2) 1)
+;;------------------
+;;p1 =2x^2 - 5x - 1
+(define p1
+  (poly-cons 2 2
+	     (poly-cons 1 -5
+			(poly-cons 0 -1 the-zero-poly))))
+
+(poly-value p1 1)
+
+
+;;p2 = x - 3
+(define p2
+  (poly-cons 1 1
+	     (poly-cons 0 -3 the-zero-poly)))
+
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x - 3)(2x +1) + 2
+
+(poly-value (poly-quotient p1 p2) 1)
+(poly-value (poly-remainder p1 p2) 1)
+
+;;---------------------------------
+
+;;Ex5.12
+;;If polynomial presentation in the order of increasing dgre
+
+
+;;degree: Will be same implementation for both increasing and decreasing
+;;leading-coef: will be needed for quotient and remainder and will need to reverse the list or traverse it to get last element. 
+;; p+,p*,p- will need to be adjusted little bit, but it will be same compelxity of decreasing
+;;however quotiesn/remainder will get more complex and division relies on the highest degree term.
+
+;;Ex5.13
+;;(cons deg coef) instead of (list deg coef)
+
+
+(cdr (list 1 2)) ;;(2)
+(cdr (cons 1 2)) ;; 2
+
+
+(car (list 1 2)) ;;1
+(car (cons 1 2)) ;;1
+
+(cdar (list (cons 1 2)))
+(define poly-cons
+  (lambda (deg coef poly)
+    (let ((deg-p (degree poly)))
+      (cond 
+       ((and (zero? deg) (equal? poly the-zero-poly))
+        (list (cons deg coef)))
+       ((< deg-p deg)
+        (if (zero? coef) 
+            poly
+            (cons (cons deg coef) poly)))
+       (else (error "poly-cons: degree too high in" poly))))))
+
+
+(define leading-coef
+  (lambda (poly)
+    (cdar poly)))
+
+;;
+;;3x^4 + 5x^2 + 12
+(define p1
+  (poly-cons 4 3
+	     (poly-cons 2 5
+			(poly-cons 0 12 the-zero-poly))))
+
+(degree p1)
+(leading-coef p1)
+
+;;7x^5 + 6x4 - x^2 + 11x - 15
+(define p2
+  (poly-cons 5 7
+	     (poly-cons 4 6
+			(poly-cons 2 -1
+				   (poly-cons 1 11
+					      (poly-cons 0 -15 the-zero-poly))))))
+
+(degree p2)
+(leading-coef p2)
+
+;;---
+;;5.14
+
+(define p* 
+  (letrec 
+    ((t* (lambda (trm poly)
+	   (let ((deg (degree trm)) 
+		 (lc (leading-coef trm)))
+	     (letrec
+		 ((t*-helper
+		   (lambda (poly)
+		     (if (zero-poly? poly)
+			 the-zero-poly
+			 (poly-cons 
+			  (+ deg (degree poly))
+			  (* lc (leading-coef poly))
+			  (t*-helper (rest-of-poly poly)))))))
+	       (t*-helper poly))))))
+    (lambda (poly1 poly2)
+      (letrec
+        ((p*-helper (lambda (p1)
+                      (if (zero-poly? p1)
+                          the-zero-poly
+                          (p+ (t* (leading-term p1) poly2)
+                              (p*-helper (rest-of-poly p1)))))))
+        (p*-helper poly1)))))
+
+
+;;By defining deg and lc in the let above, we are able to avoid evaluating
+;; (degree trm) and (leading-coef trm).
+;;Also by defining t*-helper in the let part, we don't need to pass trm anymore
+
+;;
