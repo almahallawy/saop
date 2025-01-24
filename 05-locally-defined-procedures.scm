@@ -621,6 +621,7 @@
 	     (poly-cons 2 5
 			(poly-cons 0 12 the-zero-poly))))
 
+
 ;;7x^5 + 6x4 - x^2 + 11x - 15
 (define p2
   (poly-cons 5 7
@@ -891,4 +892,54 @@
 ;; (degree trm) and (leading-coef trm).
 ;;Also by defining t*-helper in the let part, we don't need to pass trm anymore
 
-;;
+;; Ex5.15
+
+;;Recursive
+(define append-to-list-of-zeros
+  (lambda (n x)
+    (letrec
+	((append-helper
+	  (lambda (n)
+	    (cond
+	     ((zero? n) x)
+	     (else (cons 0
+			 (append-helper (sub1 n))))))))
+      (append-helper n))))
+
+
+(define poly-cons
+  (lambda (deg coef poly)
+    (let ((deg-p (degree poly)))
+      (cond
+       ((and (zero? deg) (equal? poly the-zero-poly)) (list coef))
+       ((< deg-p deg)
+        (if (zero? coef)
+            poly
+            (cons coef (append-to-list-of-zeros
+			(sub1 (- deg  deg-p)) poly))))
+       (else (error "poly-cons: Degree too high in" poly))))))
+
+;;Iterative list-of-zeros
+(define list-of-zeros
+  (lambda (n)
+    (letrec ((list-of-zeros-it
+	      (lambda (n acc)
+		(if (zero? n)
+		    acc
+		    (list-of-zeros-it (sub1 n) (cons 0 acc))))))
+      (list-of-zeros-it n '()))))
+
+(list-of-zeros 5)
+
+;;Iterative
+(define append-to-list-of-zeros
+  (lambda (n x)
+    (letrec
+	((append-helper
+	  (lambda (n acc)
+	    (if (zero? n)
+		acc
+		(append-helper (sub1 n) (cons 0 acc))))))
+      (append-helper n x))))
+
+(append-to-list-of-zeros 5 '(a b))
