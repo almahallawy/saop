@@ -887,6 +887,30 @@
                               (p*-helper (rest-of-poly p1)))))))
         (p*-helper poly1)))))
 
+;;Organize
+(define p*
+  (lambda (poly1 poly2) 
+    (letrec 
+	((t* (lambda (trm poly)
+	       (let ((deg (degree trm)) 
+		     (lc (leading-coef trm)))
+		 (letrec
+		     ((t*-helper
+		       (lambda (poly)
+			 (if (zero-poly? poly)
+			     the-zero-poly
+			     (poly-cons 
+			      (+ deg (degree poly))
+			      (* lc (leading-coef poly))
+			      (t*-helper (rest-of-poly poly)))))))
+		   (t*-helper poly)))))
+	 (p*-helper (lambda (p1)
+                      (if (zero-poly? p1)
+                          the-zero-poly
+                          (p+ (t* (leading-term p1) poly2)
+                              (p*-helper (rest-of-poly p1)))))))
+      (p*-helper poly1))))
+
 
 ;;By defining deg and lc in the let above, we are able to avoid evaluating
 ;; (degree trm) and (leading-coef trm).
