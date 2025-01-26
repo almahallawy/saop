@@ -362,6 +362,11 @@
 ;; - Program 5.14, pg. 151 -
 ;; The five basic defintion (version I)
 
+(defn append [ls1 ls2]
+  (if (empty? ls1)
+    ls2
+    (cons (first ls1) (append (rest ls1) ls2))))
+
 (defn list-of-zeros [n]
   (if (zero? n)
     '()
@@ -523,9 +528,6 @@
                                        (rest-of-poly rest))))))))]
     (pvalue poly)))
 
-
-
-
 (poly-cons 0 1 the-zero-poly)
 
 (poly-cons 1 1 the-zero-poly)
@@ -545,7 +547,7 @@
 					      (poly-cons 0 -15 the-zero-poly))))))
 
 ;; p1+p2 = 7x^5 + 9x^4 + 4x^2 + 11x-3
-(poly-value (p+ p1 p2) 1) ;;7+9+4+11-3
+(poly-value (p+ p1 p2) 1) ;;7+9+4+11-3=28
 
 
 ;;Ex5.9
@@ -576,3 +578,257 @@
 (poly-value p1 2) ;; 5*16 - 7*8 + 2*2 -4 = 24
 (poly-value p2 0) ;; 0
 (poly-value p2 -2) ;; -8 + 6*4 - 3* -2 = 22
+
+
+;;------------------
+;;Ex5.10
+(defn p+ [poly1 poly2]
+  (cond
+    (zero-poly? poly1) poly2
+
+    (zero-poly? poly2) poly1
+
+    :else (let [n1 (degree poly1)
+                n2 (degree poly2)] 
+            (cond
+              (> n1 n2)
+              (let [a1 (leading-coef poly1)
+                    rest1 (rest-of-poly poly1)]
+                (poly-cons n1 a1 (p+ rest1 poly2)))
+
+              (< n1 n2)
+              (let [a2 (leading-coef poly2)
+                    rest2 (rest-of-poly poly2)]       
+                (poly-cons n2 a2 (p+ poly1 rest2)))
+              
+              :else
+              (let [a1 (leading-coef poly1)
+                    a2 (leading-coef poly2)
+                    rest1 (rest-of-poly poly1)
+                    rest2 (rest-of-poly poly2)] 
+                (poly-cons n1 (+ a1 a2) (p+ rest1 rest2)))))))
+;;----------------------
+;;Ex5.11
+
+(defn poly-quotient [p1 p2]
+  (let [a2 (leading-coef p2)
+        n2 (degree p2)]
+    (letfn [(pq-helper [poly]
+              (cond
+                (zero-poly? poly) the-zero-poly
+
+                (< (degree poly) n2) the-zero-poly
+
+                :else (let [term (make-term
+                                  (- (degree poly) n2)
+                                  (/ (leading-coef poly) a2))]
+                        (p+ term
+                            (pq-helper (p- poly
+                                           (p* p2 term)))))))]
+      (pq-helper p1))))
+
+
+(defn poly-remainder [p1 p2]
+  (let [a2 (leading-coef p2)
+        n2 (degree p2)]
+    (letfn [(pr-helper [poly]
+              (cond
+                (zero-poly? poly) the-zero-poly
+                (< (degree poly) n2) poly
+
+                :else (let [term (make-term
+                                  (- (degree poly) n2)
+                                  (/ (leading-coef poly) a2))]
+                        (pr-helper (p- poly
+                                       (p* p2 term))))))]
+      (pr-helper p1))))
+
+
+;;p1 = x^3 - 2x^2 - 4
+(def p1
+  (poly-cons 3 1
+	     (poly-cons 2 -2
+			(poly-cons 0 -4 the-zero-poly))))
+
+(poly-value p1 1)
+
+;;p2 = x - 3
+(def p2
+  (poly-cons 1 1
+	     (poly-cons 0 -3 the-zero-poly)))
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x -3)(x^2 + x + 3) + 5
+
+(poly-value (poly-quotient p1 p2) 1) ;; 1+1+3=5
+(poly-value (poly-remainder p1 p2) 1)
+
+;;------------------------
+;;p1 = x^2 - 3x - 10
+(def p1
+  (poly-cons 2 1
+	     (poly-cons 1 -3
+			(poly-cons 0 -10 the-zero-poly))))
+
+(poly-value p1 1)
+
+;;p2 = x + 2
+(def p2
+  (poly-cons 1 1
+	     (poly-cons 0 2 the-zero-poly)))
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x + 2)(x - 5) + 0
+
+(poly-value (poly-quotient p1 p2) 1)
+(poly-value (poly-remainder p1 p2) 1)
+;;------------------
+;;p1 =2x^2 - 5x - 1
+(def p1
+  (poly-cons 2 2
+	     (poly-cons 1 -5
+			(poly-cons 0 -1 the-zero-poly))))
+
+(poly-value p1 1)
+
+
+;;p2 = x - 3
+(def p2
+  (poly-cons 1 1
+	     (poly-cons 0 -3 the-zero-poly)))
+
+
+(poly-value p2 1)
+
+;; p1 = p2 * q + r
+;;p1 / p2 = (x - 3)(2x +1) + 2
+
+(poly-value (poly-quotient p1 p2) 1)
+(poly-value (poly-remainder p1 p2) 1)
+;;---------------------------------
+
+;;Ex5.12
+;;If polynomial presentation in the order of increasing dgre
+
+
+;;degree: Will be same implementation for both increasing and decreasing
+;;leading-coef: will be needed for quotient and remainder and will need to reverse the list or traverse it to get last element. 
+;; p+,p*,p- will need to be adjusted little bit, but it will be same compelxity of decreasing
+;;however quotiesn/remainder will get more complex and division relies on the highest degree term.
+
+
+;;Ex5.13
+;;Not applicable in clojure as there is no cons cells.
+
+
+;;Ex5.14
+
+(def p*
+  (letfn [(t* [trm poly]
+            (let [deg (degree trm)
+                  lc (leading-coef trm)]
+              (letfn [(t*-helper [poly] 
+                        (if (zero-poly? poly)
+                          the-zero-poly
+                          (poly-cons
+                           (+ deg (degree poly))
+                           (* lc (leading-coef poly))
+                           (t*-helper (rest-of-poly poly)))))]
+                (t*-helper poly))))]
+    (fn [poly1 poly2]
+      (letfn [(p*-helper [p1]
+                (if (zero-poly? p1)
+                  the-zero-poly
+                  (p+ (t* (leading-term p1) poly2)
+                      (p*-helper (rest-of-poly p1)))))]
+        (p*-helper poly1)))))
+
+;;Organize 
+
+(defn p* [poly1 poly2]
+  (letfn [(t* [trm poly]
+            (let [deg (degree trm)
+                  lc (leading-coef trm)]
+              (letfn [(t*-helper [poly] 
+                        (if (zero-poly? poly)
+                          the-zero-poly
+                          (poly-cons
+                           (+ deg (degree poly))
+                           (* lc (leading-coef poly))
+                           (t*-helper (rest-of-poly poly)))))]
+                (t*-helper poly))))
+          (p*-helper [p1]
+            (if (zero-poly? p1)
+              the-zero-poly
+              (p+ (t* (leading-term p1) poly2)
+                  (p*-helper (rest-of-poly p1)))))]
+    (p*-helper poly1)))
+
+;;By defining deg and lc in the let above, we are able to avoid evaluating
+;; (degree trm) and (leading-coef trm).
+;;Also by defining t*-helper in the let part, we don't need to pass trm anymore
+
+
+;; Ex5.15
+
+
+(defn append [ls1 ls2]
+  (if (empty? ls1)
+    ls2
+    (cons (first ls1) (append (rest ls1) ls2))))
+
+(defn list-of-zeros [n]
+  (if (zero? n)
+    '()
+    (cons 0 (list-of-zeros (dec n)))))
+
+;;Recursive
+(defn append-to-list-of-zeros [n x]
+  (letfn
+      [(append-helper [n]
+         (if (zero? n)
+           x
+           (cons 0 (append-helper (dec n)))))]
+    (append-helper n)))
+
+(append-to-list-of-zeros 5 '())
+
+
+(defn poly-cons [deg coef poly]
+  (let [deg-p (degree poly)]
+    (cond
+      (and (zero? deg) (= poly the-zero-poly)) (list coef)
+
+      (< deg-p deg)
+      (if (zero? coef)
+        poly
+        (cons coef
+              (append-to-list-of-zeros (dec (- deg deg-p))  poly)))
+
+      :else
+      (throw (Exception. (str "poly-cons: Degree too high in" poly))))))
+
+
+;;Iterative list-of-zeros
+(defn list-of-zeros [n]
+  (letfn [(list-of-zeros-it [n acc]
+            (if (zero? n)
+              acc
+              (list-of-zeros-it (dec n) (cons 0 acc))))]
+    (list-of-zeros-it n '())))
+
+(list-of-zeros 5)
+
+(defn append-to-list-of-zeros [n x]
+  (letfn
+      [(append-helper [n acc]
+         (if (zero? n)
+           acc
+           (append-helper (dec n) (cons 0 acc))))]
+    (append-helper n x)))
+
+(append-to-list-of-zeros 5 '(a b))

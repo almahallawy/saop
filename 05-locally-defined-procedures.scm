@@ -771,7 +771,7 @@
 (poly-value p2 1)
 
 ;; p1 = p2 * q + r
-;;p1 / p2 = (x + 3)(x - 5) + 0
+;;p1 / p2 = (x + 2)(x - 5) + 0
 
 (poly-value (poly-quotient p1 p2) 1)
 (poly-value (poly-remainder p1 p2) 1)
