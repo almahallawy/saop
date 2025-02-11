@@ -832,3 +832,150 @@
     (append-helper n x)))
 
 (append-to-list-of-zeros 5 '(a b))
+
+;;---------------
+;;5.4 Binary Numbers
+;; - Program 5.16, pg. 157 -
+
+(defn length [ls]
+  (if (empty? ls)
+    0
+    (inc (length (rest ls)))))
+
+
+(defn digits->poly [digit-list]
+  (if (empty? digit-list)
+    (throw (Exception. (str "digits->poly: Not defined for" digit-list)))
+    (letfn [(make-poly [deg ls]
+              (if (empty? ls)
+                the-zero-poly
+                (poly-cons deg (first  ls)
+                           (make-poly (dec deg) (rest ls)))))]
+      (make-poly (dec (length digit-list)) digit-list))))
+
+(defn binary->decimal  [digit-list]
+  (poly-value (digits->poly digit-list) 2))  
+
+(binary->decimal '(1 1 0 0 1 1 0 1))
+
+
+;; - Program 5.18, pg. 158 -
+
+(defn poly->digits  [poly]
+  (letfn
+      [(convert [p deg]
+         (cond
+           (zero? deg) (list (leading-coef p))
+
+           (= (degree p) deg)
+           (cons (leading-coef p)
+                 (convert (rest-of-poly p) (dec deg)))
+
+           :else
+           (cons 0 (convert p (dec deg)))))]
+   (convert poly (degree poly))))
+
+;; - End Program -
+
+(poly->digits (digits->poly '(1 1 0 1 0 1)))
+
+;; - Program 5.20, pg. 160 -
+
+(defn decimal->binary [num]
+  (letfn
+      [(dec->bin [n deg]
+         (if (zero? n)
+	   the-zero-poly
+	   (p+ (make-term deg (rem n 2))
+               (dec->bin (quot n 2) (inc deg)))))]
+   (poly->digits (dec->bin num 0))))
+
+
+(decimal->binary 197)
+(decimal->binary (binary->decimal '(1 0 1 1 0)))
+(binary->decimal (decimal->binary 143))
+;; - End Program -
+
+
+;;Ex5.16
+(decimal->binary 53)
+(decimal->binary 404)
+
+
+;;Ex5.17
+(binary->decimal '(1 0 1 0 1 0 1 0))
+(binary->decimal '(1 1 0 1 0 1 1))
+
+
+;;5.18
+(defn octal->decimal [digit-list]
+  (poly-value (digits->poly digit-list) 8))
+
+(defn hexadecimal->decimal [digit-list]
+  (poly-value (digits->poly digit-list) 16))
+
+
+(octal->decimal '(7 6 5))
+(hexadecimal->decimal '(12 5 10)) ;;C5A 
+
+
+(defn decimal->octal [num]
+  (letfn
+      [(dec->oct [n deg]
+         (if (zero? n)
+           the-zero-poly
+           (p+ (make-term deg (rem n 8))
+               (dec->oct (quot n 8) (inc deg)))))]
+    (poly->digits (dec->oct num 0))))
+
+
+(decimal->octal 197)
+(decimal->octal (octal->decimal '(3 0 5)))
+
+(defn decimal->hexadecimal [num]
+  (letfn
+      [(dec->hex [n deg]
+         (if (zero? n)
+           the-zero-poly
+           (p+ (make-term deg (rem n 16))
+               (dec->hex (quot n 16) (inc deg)))))]
+    (poly->digits (dec->hex num 0))))
+
+(decimal->hexadecimal 3162)
+(decimal->hexadecimal (hexadecimal->decimal '(12 5 10)))
+
+(defn base->decimal [num b]
+  (poly-value (digits->poly num) b))
+
+
+(base->decimal '(1 1 0 0 1 1 0 1) 2)
+(base->decimal '(7 6 5) 8)
+(base->decimal '(12 5 10) 16) ;;C5A
+
+(defn decimal->base [num b]
+  (letfn
+      [(dec->base [n deg]
+         (if (zero? n)
+           the-zero-poly
+           (p+ (make-term deg (rem n b))
+               (dec->base (quot n b) (inc deg)))))]
+    (poly->digits (dec->base num 0))))
+
+
+(decimal->base 197 2)
+(decimal->base (base->decimal '(1 0 1 1 0) 2) 2)
+(base->decimal (decimal->base 143 2) 2)
+
+(decimal->base 197 8)
+(decimal->base (base->decimal '(3 0 5) 8) 8)
+
+(decimal->base 3162 16)
+(decimal->base (base->decimal '(12 5 10) 16) 16)
+
+(defn change-base [num b1 b2]
+  (decimal->base (base->decimal num b1) b2))
+
+
+(change-base '(5 11) 16 8)
+(change-base '(6 6 2) 8 2)
+(change-base '(1 0 1 1 1 1 1 0 1) 2 16)
