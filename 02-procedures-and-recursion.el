@@ -495,3 +495,44 @@
 ;; => (cons (quote a) (cons (cons (quote b) (cons (quote c) (cons (cons (quote d) (cons (quote e) (quote ()))) (cons (quote f) (cons (quote g) (quote ())))))) (cons (quote h) (quote ()))))
 
 
+;;Ex2.25
+;; use the same entering and leaving procedures above
+(defun swapper-trace (x y ls)
+  (cond
+   ((entering (null ls) ls 1)
+    (leaving '() 1))
+   ((entering (equal (car ls) x) ls 2)
+    (leaving (cons y (swapper-trace x y (cdr ls))) 2))
+   ((entering (equal (car ls) y) ls 3)
+    (leaving (cons x (swapper-trace x  y (cdr ls))) 3))
+   (t (entering 'else ls 4)
+      (leaving (cons (car ls) (swapper-trace x y (cdr ls))) 4))))
+
+(swapper-trace 'b 'd '(a b c d b))
+
+
+;;Ex2.28
+(defun tracing (msg result)
+  (progn
+    (princ msg)
+    (princ result)
+    (princ "\n")
+    result))
+
+(defun test-tracing (test msg input)
+  (progn
+    (if test (tracing msg input))
+    test))
+
+
+(defun remove-1st-trace (item ls)
+  (cond
+   ((test-tracing (null ls) "   Entering cond-clause-1 with ls = " ls)
+    (tracing "Leaving cond-clause-1 with result = " '()))
+   ((test-tracing (equal (car ls) item) "   Entering cond-clause-2 with ls = " ls)
+    (tracing "Leaving cond-clause-2 with result = " (cdr ls)))
+   (t (test-tracing 'else "   Entering cond-clause-3 with ls = " ls)
+    (tracing "Leaving cond-clause-3 with result = "
+	       (cons (car ls) (remove-1st-trace item (cdr ls)))))))
+
+(remove-1st-trace 'c '(a b c d))
