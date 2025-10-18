@@ -37,6 +37,11 @@
 (length '(1 (2 3) (4 5 6)))
 (length '())
 
+;;Clojure has count
+(count '(1 2 3))
+(count '())
+(count "hello")
+
 
 (defn list-ref [ls n]
   (cond
@@ -191,6 +196,7 @@
 
 ;;Ex3.7
 
+
 (defn count-background [a ls]
   (cond
     (empty? ls) 0
@@ -203,9 +209,7 @@
 (count-background 'red '(white blue green))
 (count-background 'white '())
 
-
 ;;Ex3.8
-
 (defn list-front [ls num]
   (cond
     (<= (length ls) num)
@@ -215,16 +219,16 @@
 
     :else (cons (first ls) (list-front (rest ls) (sub1 num)))))
 
+;;----Using the helper
 (defn list-front-helper [ls num]
   (if (zero? num)
     '()
     (cons (first ls) (list-front-helper (rest ls) (sub1 num)))))
 
-(defn list-ref [ls num]
+(defn list-front [ls num]
   (if (<= (length ls) num)
     (throw (Exception. (str "Error: length of " ls " is less than " num)))
-
-    (list-ref-helper ls num)))
+    (list-front-helper ls num)))
 
 (list-front '(a b c d e f g) 4)
 (list-front '(a b c) 4)
@@ -265,7 +269,7 @@
 ;;(sum-of-odds 0) = 0
 ;;(sum-of-odds 1) = (2 * 1 - 1) + (sum-of-odds 0) = 1 + 0 = 1
 ;;(sum-of-odds 2) = (2 * 2 - 1) + (sum-of-odds 1) = 3 + 1 = 4
-;;(sum-of-odds 3) = (2 * 3 - 1) + (sum-of-odds 3) = 5 + 4 = 9
+;;(sum-of-odds 3) = (2 * 3 - 1) + (sum-of-odds 2) = 5 + 4 = 9
 ;;(sum-of-odds n) = (2 * n-1) + (sum-of-odds n-1)
 
 (defn sum-of-odds [n]
@@ -424,11 +428,10 @@
 ;;Ex3.17
 
 
-;;From chatgpt
 (defn gcd [a b]
   (if (zero? b)
     a
-    (recur b (mod a b))))
+    (gcd b (mod a b))))
 
 (gcd 8 12)
 (gcd 8 -12)

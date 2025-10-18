@@ -421,9 +421,28 @@
     (or (and (positive? n1) (positive? n2))
 	(and (negative? n1) (negative? n2))))
 
+;;Ex 3.16
 (defun rabs (rtl)
   (make-ratl (abs (numr rtl))
 	     (abs (denr rtl))))
 
 (rabs (make-ratl -1 -2)) 
 
+;;Ex 3.17
+
+(defun gcd (a b)
+  (if (zerop b)
+      a
+    (gcd b (% a b))))
+
+(defun make-ratl (int1 int2)
+  (if (zerop int2)
+      (error "make-ratl: The denominator cannot be zero.")
+    (cons (/ int1 (abs (gcd int1 int2)))
+	  (/ int2 (abs (gcd int1 int2))))))
+
+(make-ratl 24 30)
+(make-ratl -10 15)
+(make-ratl 8 -10)
+(make-ratl -6 -9)
+(make-ratl 0 8)
