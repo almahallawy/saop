@@ -173,6 +173,24 @@
 
     :else (+ 1 (count-all (rest ls)))))
 
+;;Let's define scheme/pair? or elisp/consp equivlenat
+;; Ref: https://eli.thegreenplace.net/2016/common-lisps-consp-and-listp-in-clojure/
+
+(defn pair? [obj]
+  (and (list? obj) (not (empty? obj))))
+
+(pair? '(1 2))
+(pair? 'hi)
+(pair? '())
+
+(defn count-all [ls]
+  (cond
+    (empty? ls) 0
+    (pair? (first ls))
+    (+ (count-all (first ls))
+       (count-all (rest ls)))
+
+    :else (+ 1 (count-all (rest ls)))))
 
 (count-all '((a b) c () ((d (e)))))
 (count-all '(() () ()))
@@ -310,6 +328,12 @@
     (max (+ 1 (depth (first item)))
          (depth (rest item)))))
 
+(defn depth [item]
+  (if (not (pair? item))
+    0
+    (max (+ 1 (depth (first item)))
+         (depth (rest item)))))
+
 (depth '(a (b c d) ((e f) g)))
 
 (depth '(() (b c d) ((e f) g)))
@@ -325,8 +349,18 @@
     :else (cons (first ls)
                 (flatten (rest ls)))))
 
-(flatten '(a (b c d) ((e f) g)))
+(defn flatten [ls]
+  (cond
+    (empty? ls) '()
 
+    (pair? (first ls))
+    (append (flatten (first ls))
+            (flatten (rest ls)))
+
+    :else (cons (first ls)
+                (flatten (rest ls)))))
+
+(flatten '(a (b c d) ((e f) g)))
 (flatten '(() (b c d) ((e f) g)))
 
 (defn member-all? [item ls]
@@ -335,7 +369,7 @@
 
     (= (first ls) item) true
 
-    (list? (first ls))
+    (pair? (first ls))
     (or (member-all? item (first ls))
         (member-all? item (rest ls)))
 
@@ -351,7 +385,7 @@
     (= (first ls) item)
     (rest ls)
 
-    (or (not (list? (first ls))) (empty? (first ls)))
+    (or (not (list? (first ls))) (empty? (first ls))) ;;=(not (pair? (first ls)))
     (cons (first ls)
           (remove-leftmost item (rest ls)))
 
@@ -369,7 +403,7 @@
     (= (first ls) item)
     (rest ls)
 
-    (and (list? (first ls)) (member-all? item (first ls)))
+    (and (pair? (first ls)) (member-all? item (first ls)))
     (cons (remove-leftmost item (first ls))
           (rest ls))
 

@@ -307,7 +307,7 @@
 
 
 (flatten '(a (b c d) ((e f) g)))
-
+(flatten '(() (b c d) ((e f) g)))
 
 (define remove-leftmost
   (lambda (item ls)
