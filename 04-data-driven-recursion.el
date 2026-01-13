@@ -518,14 +518,20 @@
 
 (mk-desc-list-of-ints 6)
 
+(defun mk-desc-list-of-ints-it (n acc)
+  (if (zerop n)
+      acc
+      (mk-desc-list-of-ints-it (1- n) (append acc (list n)))))
+
+(mk-desc-list-of-ints-it 6 '())
 ;;Ex 4.20
 
 (defun occurs (ls item)
   (cond
-   ((null ls) 0) 
-   ((equal (car ls) item)
-    (1+ (occurs (cdr ls) item)))
-   (t (occurs (cdr ls) item))))
+    ((null ls) 0)
+    ((equal (car ls) item)
+     (1+ (occurs (cdr ls) item)))
+    (t (occurs (cdr ls) item))))
 
 (occurs '(a b a c a d) 'a)
 (occurs '(b c a (b a) c a) 'a)

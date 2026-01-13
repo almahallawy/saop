@@ -206,7 +206,7 @@
     (= (first ls) item)
     (remove-all item (rest ls))
 
-    (list? (first ls))
+    (pair? (first ls))
     (cons (remove-all item (first ls))
           (remove-all item (rest ls)))
 
@@ -220,7 +220,7 @@
     (= (first ls) item)
     (remove-all item (rest ls))
 
-    :else (cons (if (list? (first ls))
+    :else (cons (if (pair? (first ls))
                   (remove-all item (first ls))
                   (first ls))
                 (remove-all item (rest ls)))))
@@ -232,7 +232,7 @@
   (cond
     (empty? ls) '()
 
-    (seq? (first ls))
+    (pair? (first ls))
     (append (reverse-all (rest ls))
             (list (reverse-all (first ls))))
 
@@ -243,7 +243,7 @@
   (if (empty? ls)
     '()
     (append (reverse-all (rest ls))
-            (list (if (seq? (first ls))
+            (list (if (pair? (first ls))
                     (reverse-all (first ls))
                     (first ls))))))
 
@@ -275,7 +275,7 @@
     (= (first ls) old)
     (cons new (subst-all new old (rest ls)))
 
-    :else (cons (if (seq? (first ls))
+    :else (cons (if (pair? (first ls))
                   (subst-all new old (first ls))
                   (first ls))
                 (subst-all new old (rest ls)))))
@@ -296,7 +296,7 @@
     (cons new (cons old
                     (insert-left-all new old (rest ls))))
 
-    :else (cons (if (seq? (first ls))
+    :else (cons (if (pair? (first ls))
                   (insert-left-all new old (first ls))
                   (first ls))
                 (insert-left-all new old (rest ls)))))
@@ -311,7 +311,7 @@
   (cond
     (empty? ls) 0
 
-    :else (+ (if (seq? (first ls))
+    :else (+ (if (pair? (first ls))
                (sum-all (first ls))
                (first ls))
              (sum-all (rest ls)))))
@@ -321,7 +321,7 @@
 (sum-all '(1 (3 (5 (7 (9))))))
 (sum-all '())
 
-
+;; 4.4 Tree Representation of Lists
 (defn depth [item]
   (if (or (not (seq? item)) (empty? item))
     0
@@ -486,10 +486,10 @@
   (cond
     (empty? ls) '()
 
-    (and (list? (rest ls)) (not (empty? (rest  ls))))
+    (pair? (rest ls))
     (rightmost (rest ls))
 
-    (and (list? (first ls)) (not (empty? (first ls))))
+    (pair? (first ls))
     (rightmost (first ls))
 
     :else (first ls)))
@@ -538,6 +538,12 @@
 
 (harmonic-sum 4)
 
+;; n    acc
+;; 3    0
+;; 2    1/3
+;; 1    1/3 + 1/2
+;; 0    1/3 + 1/2 + 1/1
+
 (defn harmonic-sum-it [n acc]
   (if (zero? n)
     acc
@@ -549,7 +555,7 @@
 (Math/log 100)
 (harmonic-sum-it 100 0)
 
-;;
+;; 4.6 Analyzing the Fibonacci Algorithm
 (defn fib [n]
   (if (< n 2)
     n
@@ -590,7 +596,18 @@
 (fib 1)
 (fib 2)
 (fib 6)
+;;
 
+(defn reverse-it [ls acc]
+
+  (if (empty? ls)
+    acc
+    (reverse-it (rest ls) (cons (first ls) acc))))
+
+(defn reverse [ls]
+  (reverse-it ls '()))
+
+(reverse '(1 2 4))
 
 ;;Ex 4.15
 (defn fib [n]
@@ -604,7 +621,6 @@
 (fib 4)
 (fib 5)
 (fib 6)
-
 
 
 ;;Ex 4.16
@@ -686,15 +702,20 @@
 
 (mk-desc-list-of-ints 6)
 
+;; n    acc
+;; 3    '()
+;; 2    '(3)
+;; 1    '(3 2)
+;; 0    '(3 2 1)
 
-(defn mk-desc-list-of-ints [n acc]
+
+(defn mk-desc-list-of-ints-it [n acc]
   (if (zero? n)
     acc
-    (mk-desc-list-of-ints (sub1 n) (append acc (list n)))))
+    (mk-desc-list-of-ints-it (sub1 n) (append acc (list n)))))
 
 
-(mk-desc-list-of-ints 6 '())
-
+(mk-desc-list-of-ints-it 6 '())
 
 ;;Ex 4.20
 (defn occurs [ls item]

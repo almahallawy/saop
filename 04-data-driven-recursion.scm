@@ -470,6 +470,7 @@
 (harmonic-sum-it 3 0)
 (harmonic-sum-it 4 0)
 
+
 (harmonic-sum-it 100 0)
 
 ;; 4.6 Analyzing the Fibonacci Algorithm
@@ -632,8 +633,15 @@
   (lambda (n)
     (reverse (mk-asc-list-of-ints n '()))))
 
-
 (mk-desc-list-of-ints 6)
+
+(define mk-desc-list-of-ints-it
+  (lambda (n acc)
+    (if (zero? n)
+	acc
+	(mk-desc-list-of-ints-it (1- n) (append acc (list n))))))
+
+(mk-desc-list-of-ints-it 6 '())
 
 
 ;;;; Ex4.20
