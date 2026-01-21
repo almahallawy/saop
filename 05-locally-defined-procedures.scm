@@ -2,11 +2,23 @@
 
 ;; Chapter 5: Locally Defined Procedures
 
+
+((lambda (x y) (+ x y)) 2 3)
+
+(define a 1)
+(define z '(4))
+
+((lambda (f y) (f a (f y z))) cons 3)
+
+
 ((lambda (x)
    ((lambda (y)
       (- x y))
     15))
  20)
+
+(let ((a 2) (b 3))
+  (+ a b))
 
 (let ((a +) (b 3))
   (a 2 b))
@@ -14,6 +26,24 @@
 (let ((add2 (lambda (x) (+ x 2)))
       (b (* 3 (/ 2 12))))
   (/ b (add2 b)))
+
+
+(define a 5)
+
+(1+ a)
+
+(let ((a 3))
+  (1+ 3))
+
+(1+ a)
+
+(let ((a 5))
+  (begin
+    (writeln (1+ a))
+    (let ((a 3))
+      (writeln (1+ a)))
+    (1+ a)))
+
 
 (let ((a 2) (b 3))
   (+ a b))
@@ -150,6 +180,7 @@
 
 ;; Note the differnce between Clojure in Scheme in let evaluatoin order
 ;; in Clojure, the bindings in a let form are evaluated in the order they are written, and each binding can depend on the previous ones. This means you can use the value of a previously defined binding in the definition of a subsequent binding.
+
 ;;This code will fail in scheme
 (let ((a 1)
       (b a))
@@ -188,6 +219,11 @@
 
 ;; Ex 5.3
 
+(let ((a 2) (b 3))
+  (+ a b))
+;; is equivelant to
+((lambda (a b) (+ a b)) 2 3)
+
 ;;start converting from outer let
 (let ((a 5))
   (let ((fun (lambda (x) (max x a))))
@@ -195,7 +231,7 @@
 	  (x 20))
       (fun 1))))
 
-;; (let ((a 5)) boady)
+;; (let ((a 5)) body)
 ;; ==
 ;; ((lambda (a)
 ;;    body) 5)
@@ -317,11 +353,18 @@
 
 
 ;; Ex5.5
+(define writeln
+  (lambda args
+    (for-each display args)
+    (newline)))
+
+
 (define mystery
   (lambda (n)
     (letrec
 	((mystery-helper
 	  (lambda (n s)
+	    (writeln "n = " n " s = " s)
 	    (cond
 	     ((zero? n) (list s))
 	     (else
@@ -335,6 +378,23 @@
 
 (mystery 3);;All binary numbers of 3 bits = 2^3 = 8
 ;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
+
+
+;; n = 3 s = ()
+;; n = 2 s = (0)
+;; n = 1 s = (0 0)
+;; n = 0 s = (0 0 0)
+;; n = 0 s = (1 0 0)
+;; n = 1 s = (1 0)
+;; n = 0 s = (0 1 0)
+;; n = 0 s = (1 1 0)
+;; n = 2 s = (1)
+;; n = 1 s = (0 1)
+;; n = 0 s = (0 0 1)
+;; n = 0 s = (1 0 1)
+;; n = 1 s = (1 1)
+;; n = 0 s = (0 1 1)
+;; n = 0 s = (1 1 1)
 
 ;;(mystery n) All binary numbers of n bits = 2^n
 
@@ -598,16 +658,16 @@
       ((pvalue (lambda (p)
                  (let ((n (degree p)))
                    (if (zero? n) 
-                       (leading-coef p)
+                       (leading-coef p) ;; terminating cond. 
                        (let ((rest (rest-of-poly p)))
                          (if (< (degree rest) (sub1 n))
-                             (pvalue (poly-cons
+                             (pvalue (poly-cons ;; an-1 = 0
                                        (sub1 n)
-                                       (* num (leading-coef p))
+                                       (* num (leading-coef p)) ;;x an
                                        rest))
-                             (pvalue (poly-cons 
+                             (pvalue (poly-cons ;;an-1 != 0
                                        (sub1 n)
-                                       (+ (* num (leading-coef p))
+                                       (+ (* num (leading-coef p));; an-1 + (x an)
                                           (leading-coef rest))
                                        (rest-of-poly rest))))))))))
       (pvalue poly))))
@@ -1049,8 +1109,8 @@
 (decimal->binary 404)
 
 ;;Ex5.17
-(binary->decimal '(1 0 1 0 1 0 1 0))
-(binary->decimal '(1 1 0 1 0 1 1))
+(binary->decimal '(1 0 1 0 1 0 1 0)); 170
+(binary->decimal '(1 1 0 1 0 1 1)) ; 107
 
 
 ;;Ex5.18
@@ -1140,3 +1200,64 @@
 
 ;; Ex5.19
 
+(define binary-sum
+  (lambda (b1 b2)
+    (decimal->binary (+ (binary->decimal b1)
+			(binary->decimal b2)))))
+
+(binary-sum '(1 0 1 0 1 0 1 0) '(1 1 0 1 0 1 1));;170+107 = 277 = 100010101
+
+(define binary-product
+  (lambda (b1 b2)
+    (decimal->binary (* (binary->decimal b1)
+			(binary->decimal b2)))))
+
+(binary-product '(1 1 1 1) '(0 1 0 1)); 15*5 = 75 = 1001011
+
+
+;;Ex5.20
+
+;;;; Exercise 3.12: n-tuple->integer
+(define n-tuple->integer
+  (lambda (tup)
+    (cond
+     ((null? tup)
+      (error "Error: bad argument" tup "to n-tuple->integer"))
+     ((null? (cdr tup)) (car tup))
+     (else (+ (* (car tup) (expt 10 (sub1(length tup))))
+	      (n-tuple->integer (cdr tup)))))))
+
+(n-tuple->integer '(5))
+(n-tuple->integer '(1 2))
+(n-tuple->integer '(3 1 4 6))
+(n-tuple->integer '(0))
+(n-tuple->integer '())
+(+ (n-tuple->integer '(1 2 3)) (n-tuple->integer '(3 2 1)))
+
+(define binary->decimal
+  (lambda (b)
+    (if (null? b)
+	(error "bad argument")
+	(letrec
+	    ((b2d
+	      (lambda (deg ls)
+		(if (null? ls)
+		    0
+		    (+ (* (car ls) (expt 2 deg))
+		       (b2d (1- deg) (cdr ls)))))))
+	  (b2d (1- (length b)) b)))))
+
+(binary->decimal '(1 1 1 1 1))
+
+(define decimal->binary
+  (lambda (num)
+    (letrec
+	((dec->bin
+          (lambda (n deg)
+            (if (zero? n)
+		'()
+		(cons (remainder n 2)
+		      (dec->bin (quotient n 2) (1+ deg)))))))
+      (dec->bin num 0))))
+
+(decimal->binary 5)

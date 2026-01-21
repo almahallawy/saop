@@ -8,9 +8,15 @@
 
 ((fn [x y] (+ x y)) 2 3)
 
+(def a 1)
+(def z '(4))
+
+((fn [f y] (f a (f y z))) cons 3)
+
 ((fn [x]
    (fn [y]
-     (- x y)) 15)
+     (- x y))
+   15)
  20)
 
 (let [a 2 b 3]
@@ -67,8 +73,13 @@
 (let [b 2]
   (let [add2 (fn [x] (+ x b))
         b 0.5]
-    (/ b (add2 b))))
+    (/ b (add2 b))))rest
 
+;;Let's define scheme/pair? or elisp/consp equivlenat
+;; Ref: https://eli.thegreenplace.net/2016/common-lisps-consp-and-listp-in-clojure/
+
+(defn pair? [obj]
+  (and (list? obj) (not (empty? obj))))
 
 (defn remove-leftmost [item ls]
   (cond
@@ -77,12 +88,12 @@
     (= (first ls) item)
     (rest ls)
 
-    (and (list? (first ls))
-         (not (empty? (first ls))))
+    (pair? (first ls))
     (let [rem-list (remove-leftmost item (first  ls))]
       (cons rem-list (cond
                        (= (first ls) rem-list)
                        (remove-leftmost item (rest ls))
+                       
                        :else (rest ls))))
 
     :else (cons (first ls)
@@ -105,6 +116,11 @@
                (* n (fact (sub1 n)))))]
   (fact 4))
 
+(let [fact (fn [n]
+             (if (zero? n)
+               1
+               (* n (fact (sub1 n)))))]
+  (fact 0))
 
 (letfn [(fact [n]
           (if (zero? n)
@@ -151,7 +167,7 @@
 
 ;;Ex5/.1
 (let [a 5]                      ;Env1 
-  (let [fun (fn [x] (max x a))] ;Env2, a bound to 5 in Env1, x bound to 1 from fn param
+  (let [fun (fn [x] (max x a))] ;Env2, a bound to 5 in Env1, x bound to 1 from fn param passing
     (let [a 10                  ;Env3
           x 20]
       (fun 1))))
@@ -279,6 +295,7 @@
 (defn mystery [n]
   (letfn
       [(mystery-helper [n s]
+         (println "n = "n" s = "s)
          (cond
            (zero? n) (list s)
 
@@ -290,8 +307,25 @@
 (mystery 4);;All binary numbers of 4 bits = 2^4 = 16
 ;; => ((0 0 0 0) (1 0 0 0) (0 1 0 0) (1 1 0 0) (0 0 1 0) (1 0 1 0) (0 1 1 0) (1 1 1 0) (0 0 0 1) (1 0 0 1) (0 1 0 1) (1 1 0 1) (0 0 1 1) (1 0 1 1) (0 1 1 1) (1 1 1 1))
 
+
 (mystery 3);;All binary numbers of 3 bits = 2^3 = 8
 ;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
+
+;; n =  3  s =  ()
+;; n =  2  s =  (0)
+;; n =  1  s =  (0 0)
+;; n =  0  s =  (0 0 0)
+;; n =  0  s =  (1 0 0)
+;; n =  1  s =  (1 0)
+;; n =  0  s =  (0 1 0)
+;; n =  0  s =  (1 1 0)
+;; n =  2  s =  (1)
+;; n =  1  s =  (0 1)
+;; n =  0  s =  (0 0 1)
+;; n =  0  s =  (1 0 1)
+;; n =  1  s =  (1 1)
+;; n =  0  s =  (0 1 1)
+;; n =  0  s =  (1 1 1)
 
 ;;(mystery n) All binary numbers of n bits = 2^n
 
@@ -306,7 +340,7 @@
            (= (first ls) old)
            (cons new (cons old (insert-la (rest ls))))
 
-           (list? (first ls))
+           (pair? (first ls))
            (cons (insert-la (first ls))
                  (insert-la (rest ls)))
 
@@ -516,16 +550,16 @@
   (letfn [(pvalue [p]
             (let [n (degree p)]
               (if (zero? n)
-                (leading-coef p)
+                (leading-coef p) ;; terminating cond. 
                 (let [rest (rest-of-poly p)]
                   (if (< (degree rest) (dec n))
-                    (pvalue (poly-cons (dec n)
-                                       (* num (leading-coef p))
+                    (pvalue (poly-cons (dec n) ;;an-1 = 0
+                                       (* num (leading-coef p)) ;; x an
                                        rest))
-                    (pvalue (poly-cons (dec n)
-                                       (+ (* num (leading-coef p))
-                                          (leading-coef rest))
-                                       (rest-of-poly rest))))))))]
+                    (pvalue (poly-cons (dec n) ;;an-1 != 0
+                                       (+ (* num (leading-coef p)) ;; an-1 + (x an) 
+                                         ( leading-coef rest))
+                                       (rest-of-poly rest))))))))];; poly of degree n-2
     (pvalue poly)))
 
 (poly-cons 0 1 the-zero-poly)
@@ -559,7 +593,6 @@
 	     (poly-cons 3 -7
 			(poly-cons 1 2
 				   (poly-cons 0 -4 the-zero-poly)))))
-
 (def p2
   (poly-cons 3 1
 	     (poly-cons 2 6
@@ -979,3 +1012,50 @@
 (change-base '(5 11) 16 8)
 (change-base '(6 6 2) 8 2)
 (change-base '(1 0 1 1 1 1 1 0 1) 2 16)
+
+;;Ex 5.19
+
+(defn binary-sum [b1 b2]
+  (decimal->binary (+ (binary->decimal b1)
+                      (binary->decimal b2))))
+
+(binary-sum '(1 0 1 0 1 0 1 0) '(1 1 0 1 0 1 1));;170+107 = 277 = 100010101
+
+(defn binary-product [b1 b2]
+  (decimal->binary (* (binary->decimal b1)
+                      (binary->decimal b2))))
+
+(binary-product '(1 1 1 1) '(0 1 0 1)); 15*5 = 75 = 1001011
+
+;;Ex5.20
+
+;;Ex3.12
+(defn n-tuple->integer [ls]
+  (cond
+    (empty? ls) (throw (Exception. (str "Error: bad argument" ls " to n-tuple->integer:")))
+    (empty? (rest ls)) (first ls)
+    :else (+ (* (first ls) (Math/pow 10 (sub1(length ls))))
+             (n-tuple->integer (rest ls)))))
+
+
+(defn binary->decimal [b]
+  (if (empty? b)
+    (throw (Exception. (str "bad argument" b)))
+    (letfn [(b2d [deg ls]
+              (if (empty? ls)
+                0
+                (+ (* (first ls) (Math/pow 2 deg))
+                   (b2d (dec deg) (rest ls)))))]
+      (b2d (dec (length b)) b))))
+
+(binary->decimal '(1 1 1 1 1))
+
+(defn decimal->binary [num]
+  (letfn [(dec->bin [n deg]
+            (if (zero? n)
+              '()
+              (cons (rem n 2)
+                    (dec->bin (quot n 2) (inc deg)))))]
+    (dec->bin  num 0)))
+
+(decimal->binary 5)

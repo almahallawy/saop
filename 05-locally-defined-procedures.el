@@ -9,6 +9,14 @@
 ;;https://www.emacswiki.org/emacs/DynamicBindingVsLexicalBinding
 (setq lexical-binding t) ;; important to include this
 
+((lambda (x y) (+ x y))2 3)
+
+(setq a 1)
+(setq z '(4))
+
+((lambda (f y) (funcall f  a (funcall f y z))) (function cons) 3)
+
+
 ((lambda (x)
    ((lambda (y)
       (- x y))
@@ -103,10 +111,17 @@
 		  (* n (fact (1- n)))))))
   (fact 4))
 
-(letrec ((fact (lambda (n)
+(let ((fact (lambda (n)
 	      (if (zerop n)
 		  1
-		  (* n (funcall fact (1- n)))))))
+		  (* n (fact (1- n)))))))
+  (fact 0))
+
+
+(letrec ((fact (lambda (n)
+		 (if (zerop n)
+		     1
+		   (* n (funcall fact (1- n)))))))
   (funcall fact 4))
 
 ;;Mutual recursion
@@ -262,6 +277,7 @@
   (letrec
       ((mystery-helper
 	(lambda (n s)
+	  (message "n = %d  s = %s" n s)
 	  (cond
 	   ((zerop n) (list s))
 	   (t
@@ -273,9 +289,24 @@
 (mystery 4);;All binary numbers of 4 bits = 2^4 = 16
 ;; => ((0 0 0 0) (1 0 0 0) (0 1 0 0) (1 1 0 0) (0 0 1 0) (1 0 1 0) (0 1 1 0) (1 1 1 0) (0 0 0 1) (1 0 0 1) (0 1 0 1) (1 1 0 1) (0 0 1 1) (1 0 1 1) (0 1 1 1) (1 1 1 1))
 
-(mystery 3);;All binary numbers of 3 bits = 2^3 = 8
+(mystery 3);All binary numbers of 3 bits = 2^3 = 8
 ;; => ((0 0 0) (1 0 0) (0 1 0) (1 1 0) (0 0 1) (1 0 1) (0 1 1) (1 1 1))
 
+;; n = 3  s = nil
+;; n = 2  s = (0)
+;; n = 1  s = (0 0)
+;; n = 0  s = (0 0 0)
+;; n = 0  s = (1 0 0)
+;; n = 1  s = (1 0)
+;; n = 0  s = (0 1 0)
+;; n = 0  s = (1 1 0)
+;; n = 2  s = (1)
+;; n = 1  s = (0 1)
+;; n = 0  s = (0 0 1)
+;; n = 0  s = (1 0 1)
+;; n = 1  s = (1 1)
+;; n = 0  s = (0 1 1)
+;; n = 0  s = (1 1 1)
 ;;(mystery n) All binary numbers of n bits = 2^n
 
 
@@ -342,7 +373,7 @@
    ((zerop n) '())
    (t (cons 0 (list-of-zeros (sub1 n))))))
 
-(list-of-zero 5)
+(list-of-zeros 5)
 
 (setq the-zero-poly '(0))
 
@@ -506,16 +537,16 @@
       ((pvalue (lambda (p)
                  (let ((n (degree p)))
                    (if (zerop n) 
-                       (leading-coef p)
+                       (leading-coef p);; terminating cond.
                      (let ((rest (rest-of-poly p)))
                        (if (< (degree rest) (sub1 n))
-                           (funcall pvalue (poly-cons
+                           (funcall pvalue (poly-cons ;;an-1 = 0;
                                     (sub1 n)
-                                    (* num (leading-coef p))
+                                    (* num (leading-coef p));; x an
                                     rest))
-                         (funcall pvalue (poly-cons 
+                         (funcall pvalue (poly-cons  ;; an-1 != 0 
                                   (sub1 n)
-                                  (+ (* num (leading-coef p))
+                                  (+ (* num (leading-coef p));; an-1 + (x an)
                                      (leading-coef rest))
                                   (rest-of-poly rest))))))))))
     (funcall pvalue poly)))
@@ -1014,3 +1045,47 @@
 (change-base '(5 11) 16 8)
 (change-base '(6 6 2) 8 2)
 (change-base '(1 0 1 1 1 1 1 0 1) 2 16)
+
+
+;;Ex5.19
+
+(defun binary-sum (b1 b2)
+  (decimal->binary (+ (binary->decimal b1)
+		      (binary->decimal b2))))
+
+(binary-sum '(1 0 1 0 1 0 1 0) '(1 1 0 1 0 1 1));;170+107 = 277 = 100010101
+
+(defun binary-product (b1 b2)
+  (decimal->binary (* (binary->decimal b1)
+		      (binary->decimal b2))))
+
+(binary-product '(1 1 1 1) '(0 1 0 1))	; 15*5 = 75 = 1001011
+
+;; Ex5.20
+
+(defun binary->decimal  (b)
+  (if (null b)
+      (error "bad argument %s"  b)
+    (letrec
+	((b2d
+	  (lambda (deg ls)
+	    (if (null ls)
+		0
+	      (+ (* (car ls) (expt 2 deg))
+		 (funcall b2d (1- deg) (cdr ls)))))))
+      (funcall b2d (1- (length b)) b))))
+
+(binary->decimal '(1 1 1 1 1))
+
+
+(defun decimal->binary	(num)
+  (letrec
+      ((dec->bin
+        (lambda (n deg)
+          (if (zerop n)
+	      '()
+	    (cons (mod n 2)
+		  (funcall dec->bin (truncate n 2) (1+ deg)))))))
+    (funcall dec->bin num 0)))
+
+(decimal->binary 5)
