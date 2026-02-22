@@ -501,7 +501,7 @@
 (rpositive? (make-ratl 1 2))
 
 
-;;;; Exericse 3.16: rabs
+;;;; Exercise 3.16: rabs
 (define rabs
   (lambda (rtl)
     (make-ratl

@@ -131,7 +131,7 @@
 (dot-product '() '())
 
 
-;;; Ex3.4: mutl-by-n
+;;; Ex3.4: mult-by-n
 
 
 (defun mult-by-n (num ntpl)
@@ -209,7 +209,7 @@
 (defun list-front (ls num)
   (cond
    ((> num (length ls))
-    (error "Error: Lenght of %s is less than %d" ls num))
+    (error "Error: Length of %s is less than %d" ls num))
    (t (list-front-helper ls num))))
 
 (defun list-front-helper (ls num)
@@ -299,7 +299,7 @@
 (n-tuple->integer '())
 (+ (n-tuple->integer '(1 2 3)) (n-tuple->integer '(3 2 1)))
 
-;; Ex 3.13: please check answers in the corresponding shceme implementation file
+;; Ex 3.13: please check answers in the corresponding scheme implementation file
 
 ;;; 3.3 Exact Arithmetic and Data Abstractions
 
@@ -407,7 +407,7 @@
 ;; Ex 3.14 rminus
 
 (defun rminus (rtl)
-  (make-ratl (* -1 (numr rtl) (denr rtl))))
+  (make-ratl (* -1 (numr rtl)) (denr rtl)))
 
 
 (rprint  (make-ratl 1 2))
